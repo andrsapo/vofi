@@ -172,7 +172,7 @@ export function Schritt3Ertraege({ projekt }: { projekt: Projekt }) {
             />
           </Klappbereich>
 
-          <Klappbereich titel="Verwaltungskosten" initialOffen={false}>
+          <Klappbereich titel="Verwaltungskosten">
             <Feld feldKey="verwaltungskosten" label="Betrag je Einheit" klasse="feld--breit">
               <ZahlenInput
                 wert={daten.ertraegeAufwendungen.verwaltungskostenJeEinheit}
@@ -449,14 +449,13 @@ function StaffelFeld({
   aendere: (fn: (daten: SzenarioDaten) => void) => void
 }) {
   return (
-    <label className="staffel__feld">
-      <span className="staffel__label">{label}</span>
+    <Feld feldKey={`instandhaltung.staffel.${feld}`} label={label} klasse="staffel__feld" block="Instandhaltung">
       <ZahlenInput
         wert={daten.ertraegeAufwendungen.instandhaltung.staffel[feld]}
         einheit="€/m²"
         ariaLabel={`Instandhaltung Jahre ${label}`}
         onWert={(v) => aendere((sd) => (sd.ertraegeAufwendungen.instandhaltung.staffel[feld] = v))}
       />
-    </label>
+    </Feld>
   )
 }

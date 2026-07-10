@@ -504,7 +504,7 @@ function BeraterteamWidget() {
   }, [])
 
   const personen = erpRepository.ladePersonen().filter(
-    (p) => (p.rolle === 'Berater' || p.rolle === 'Manager') && p.favorisiert === true
+    (p) => p.rolle === 'Berater' && p.favorisiert === true
   )
   const [aktivePerson, setAktivePerson] = useState<import('../types').Person | null>(null)
   const [toastText, setToastText] = useState<string | null>(null)
@@ -542,7 +542,7 @@ function BeraterteamWidget() {
             <Avatar person={p} size={44} />
             <div className="beraterteam__info">
               <strong>{p.name}</strong>
-              <small>{p.rolle}</small>
+              <small>{p.fachgebiet ?? p.rolle}</small>
             </div>
             <div className="beraterteam__aktionen">
               <button

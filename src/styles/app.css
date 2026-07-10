@@ -2323,9 +2323,13 @@ button.zuletzt__karte:hover {
   flex-direction: column;
   gap: 4px;
 }
-.staffel__label {
+.staffel__feld .feld__label {
   font-size: 12px;
   color: var(--color-text-secondary);
+  margin-bottom: 0;
+}
+.staffel__feld .feld__eingabe {
+  margin-top: 0;
 }
 .staffel__feld .zahlen-input {
   width: 100px;

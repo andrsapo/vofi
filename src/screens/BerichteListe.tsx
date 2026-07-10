@@ -8,7 +8,7 @@
  *     resizable Spalten (Drag & Drop), Rechtsklick-Kontextmenü zum Ein-/
  *     Ausblenden von Spalten, benutzerspezifische Persistenz. */
 
-import { useMemo, useState } from 'react'
+import { useMemo, useRef, useState } from 'react'
 import type { Bericht, BerichtStatus, Projekt } from '../types'
 import { erpRepository } from '../data/erpRepository'
 import { useApp, useStore } from '../state/store'
@@ -323,10 +323,26 @@ function BerichtsZeile({
   const [projekteOffen, setProjekteOffen] = useState(false)
 
   const [menueOffen, setMenueOffen] = useState(false)
+  const [menuePos, setMenuePos] = useState<{ top?: number; bottom?: number; right: number } | null>(null)
+  const aktionenBtnRef = useRef<HTMLButtonElement>(null)
   const [umbenennenOffen, setUmbenennenOffen] = useState(false)
   const [loeschenOffen, setLoeschenOffen] = useState(false)
 
   const oeffnen = () => store.navigiere({ view: 'bericht', berichtId: bericht.id })
+
+  function oeffneMenu() {
+    if (aktionenBtnRef.current) {
+      const rect = aktionenBtnRef.current.getBoundingClientRect()
+      const menuHoehe = 170
+      const right = window.innerWidth - rect.right
+      if (rect.bottom + menuHoehe > window.innerHeight) {
+        setMenuePos({ bottom: window.innerHeight - rect.top, right })
+      } else {
+        setMenuePos({ top: rect.bottom + 4, right })
+      }
+    }
+    setMenueOffen((v) => !v)
+  }
 
   // Wie in der Aufgaben-Liste: pro Spaltenschlüssel eine Zell-Renderer-
   // Funktion. So können ausgeblendete Spalten wirklich entfallen und die
@@ -402,18 +418,19 @@ function BerichtsZeile({
           <td className="berichte-tabelle__aktionen-zelle">
             <span className="berichte-tabelle__aktionen">
               <button
+                ref={aktionenBtnRef}
                 type="button"
                 className="icon-btn"
                 aria-label="Aktionen"
                 title="Aktionen"
-                onClick={() => setMenueOffen((v) => !v)}
+                onClick={oeffneMenu}
               >
                 <IconMehr size={16} />
               </button>
-              {menueOffen && (
+              {menueOffen && menuePos && (
                 <Popover
-                  onClose={() => setMenueOffen(false)}
-                  style={{ right: 0, top: '100%', marginTop: 4, zIndex: 60, minWidth: 160 }}
+                  onClose={() => { setMenueOffen(false); setMenuePos(null) }}
+                  style={{ position: 'fixed', ...menuePos, zIndex: 200, minWidth: 160 }}
                 >
                   <div className="berichte__aktionen-menue">
                     <button

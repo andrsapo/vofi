@@ -190,18 +190,18 @@ export function NeuesProjektModal({
           </div>
 
           <div className="formfeld" style={{ position: 'relative' }}>
-            <span className="formfeld__label">Zugangsberechtigte</span>
-            <div className="zugang">
-              <span className="zugang__avatare">
-                {zugang.map((id) => {
-                  const p = erpRepository.ladePerson(id)
-                  return p ? <Avatar key={id} person={p} size={28} /> : null
-                })}
-              </span>
+            <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+              <span className="formfeld__label">Zugangsberechtigte</span>
               <button type="button" className="link-btn" onClick={() => setZugangEditorOffen(true)}>
                 Bearbeiten
               </button>
             </div>
+            <span className="zugang__avatare">
+              {zugang.map((id) => {
+                const p = erpRepository.ladePerson(id)
+                return p ? <Avatar key={id} person={p} size={28} /> : null
+              })}
+            </span>
             {zugangEditorOffen && (
               <ZugangOverlay
                 personen={personen}
