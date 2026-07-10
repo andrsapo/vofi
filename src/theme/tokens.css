@@ -1,0 +1,87 @@
+/*
+ * Zentrale Design-Tokens – Farben 1:1 aus den Klickstrecken-Screenshots gesampelt.
+ * ANNAHME: Werte stammen aus JPEG-komprimierten PPTX-Screenshots (Näherungswerte).
+ * Sobald die Original-Figma-Datei zugänglich ist, hier zentral korrigieren.
+ */
+:root {
+  /* Primärfarben laut Entwicklungs-Prompt */
+  --color-primary: #15172e; /* Sidebar-Hintergrund, dunkles Navy */
+  --color-accent: #f2d551; /* Marke Gelb: Logo, primäre CTAs, aktive Indikatoren */
+  --color-accent-hover: #ecca38;
+  --color-accent-soft: #faf0c4; /* helle Gelb-Variante (Sekundär-Buttons wie "Bericht erstellen") */
+  --color-surface: #ffffff; /* Content-Hintergrund */
+
+  /* Override-Kennzeichnung (ERP-Werte manuell überschrieben) */
+  --color-override-label: #424761;
+  --color-override-dot: #4a7dff; /* blauer Punkt-Marker */
+
+  /* Status-Badges */
+  --color-status-info-bg: #e9f1ff; /* "Beschlussreif" / "Diskutiert" */
+  --color-status-info-text: #353d66;
+  --color-status-success-bg: #cbeee1; /* "Beschlossen" / "Gesendet" / "Erledigt" */
+  --color-status-success-text: #1d6b4e;
+  --color-status-neutral-bg: #eaeaea; /* "In Bearbeitung" (Projekt) */
+  --color-status-neutral-text: #6d6d6d;
+
+  /* Abweichungen (Soll-Ist), gedeckte Pastelltöne */
+  --color-delta-pos-bg: #e2f3ea;
+  --color-delta-pos-text: #2f8a5e;
+  --color-delta-neg-bg: #fbe9e2;
+  --color-delta-neg-text: #c06544;
+
+  /* Beträge in Erträge/Aufwendungen */
+  --color-amount-pos: #2f8a5e;
+  --color-amount-neg: #d2543a;
+
+  /* Spaltenköpfe Erträge/Aufwendungen */
+  --color-ertraege-head-bg: #eef7f1;
+  --color-aufwendungen-head-bg: #fbf4e6;
+
+  /* Text */
+  --color-text: #1b1d2b;
+  --color-text-secondary: #6e7183;
+  --color-text-muted: #9b9dad;
+  --color-text-on-dark: #e7e8f0;
+  --color-text-on-dark-dim: #a2a5bd;
+
+  /* Flächen / Rahmen / Eingaben */
+  --color-page-bg: #ffffff;
+  --color-panel-bg: #f7f7f9;
+  --color-input-bg: #f4f4f6;
+  --color-input-border: #e3e4ea;
+  --color-border: #e7e8ee;
+  --color-hover: #f2f3f7;
+  --color-sidebar-hover: #22243c;
+  --color-sidebar-active: #2a2c47;
+
+  /* Info-Boxen */
+  --color-infobox-bg: #e9f1ff; /* hellblaue Ergebnisboxen (Grundstückswert etc.) */
+  --color-hintbox-bg: #fcf6df; /* gelbe Hinweisbox (Energetische Sanierung) */
+  --color-dark-tooltip-bg: #33364d; /* dunkles Override-Popup */
+  --color-dark-tooltip-text: #f0f1f7;
+  --color-dark-tooltip-link: #8ab2ff;
+
+  /* Kommentar-Hervorhebung (Feld-Label gelb markiert) */
+  --color-comment-highlight: #f8e9a8;
+  --color-comment-selected: #2fae7e; /* grüner Seitenstreifen aktiver Kommentar */
+  --color-task-inprogress-bg: #dbe7fb;
+  --color-task-inprogress-text: #3c5f9e;
+  --color-unread-dot: #e4573d; /* roter Punkt/Badges */
+
+  /* Diagramm-/Szenario-Farben (Basis blau, Szenarien grün/violett/orange) */
+  --color-szenario-1: #5b8def;
+  --color-szenario-2: #2fae7e;
+  --color-szenario-3: #9a6ee8;
+  --color-szenario-4: #e8964b;
+
+  /* Geometrie */
+  --radius-s: 6px;
+  --radius-m: 10px;
+  --radius-l: 14px;
+  --shadow-popup: 0 8px 30px rgba(21, 23, 46, 0.18);
+  --shadow-card: 0 1px 3px rgba(21, 23, 46, 0.08);
+  --sidebar-width: 248px;
+  --rail-width: 300px;
+
+  --font-family: 'Inter', system-ui, sans-serif;
+}
