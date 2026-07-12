@@ -3,8 +3,26 @@ import { useAuthContext } from '../auth/AuthContext'
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
-/* Markengrafik als inline SVG – Seitenverhältnis 2752:1006, exakt aus login-grafik.png */
+/* Markengrafik als inline SVG – Seitenverhältnis 2752:1006, exakt nach login-grafik.png */
 function LoginGrafik() {
+  // Isometrischer Würfel/Raum:
+  // Mittelpunkt des Würfels liegt bei etwa x=1376 (Mitte), y=503 (Mitte)
+  // Obere Kante bei y=0, untere bei y=1006
+  // Linke Spitze bei ~x=630, Rechte bei ~x=2120
+  // Scheitelpunkt oben bei ~x=1100, Scheitelpunkt unten bei ~x=1650
+  const BG = '#12142a'
+  const BLAU = '#5b8fdc'
+  const GELB = '#e8b832'
+  const WEISS = '#ffffff'
+
+  // Kernpunkte des Würfels (aus der Referenz abgemessen):
+  // A = obere Kante links  (630, 0)
+  // B = obere Kante rechts (2120, 0)  [oben rechts, Deckel]
+  // C = Würfel-Mitte oben  (1376, 372) [Scheitel oben]
+  // D = Würfel-Mitte unten (1376, 634) [Scheitel unten]
+  // E = untere Kante links (630, 1006)
+  // F = untere Kante rechts(2120, 1006)
+
   return (
     <svg
       viewBox="0 0 2752 1006"
@@ -12,22 +30,28 @@ function LoginGrafik() {
       style={{ width: '100%', height: 'auto', display: 'block' }}
       aria-hidden="true"
     >
-      {/* Linkes blaues Dreieck groß */}
-      <polygon points="0,1006 680,1006 0,480" fill="#5b8fdc" />
-      {/* Linkes blaues Dreieck klein unten */}
-      <polygon points="0,1006 320,1006 0,780" fill="#ffffff" opacity="0.15" />
-      {/* Mittleres gelbes Dreieck (linke Fläche des Würfels) */}
-      <polygon points="780,0 1210,530 780,1006 580,1006 580,0" fill="#f0c740" />
-      {/* Weiße Fläche oben (Deckel des Würfels) */}
-      <polygon points="780,0 1800,0 1800,530 1210,530" fill="#ffffff" />
-      {/* Blaue Fläche unten (Boden des Würfels) */}
-      <polygon points="1210,530 1800,530 2200,1006 780,1006" fill="#5b8fdc" />
-      {/* Gelbes Dreieck unten rechts */}
-      <polygon points="1800,530 2200,1006 2752,1006 2752,530" fill="#f0c740" opacity="0.6" />
-      {/* Rechtes blaues Dreieck */}
-      <polygon points="1800,0 2752,0 2752,530 1800,530" fill="#5b8fdc" opacity="0.85" />
+      <rect width="2752" height="1006" fill={BG} />
+
+      {/* Linkes blaues Dreieck: Spitze bei Würfel-Mitte-links */}
+      <polygon points="0,210 630,503 0,796" fill={BLAU} />
+
       {/* Kleines weißes Dreieck unten links */}
-      <polygon points="0,1006 200,1006 0,900" fill="#ffffff" opacity="0.10" />
+      <polygon points="0,796 200,1006 0,1006" fill={WEISS} />
+
+      {/* Gelbe linke Würfelfläche */}
+      <polygon points="630,503 1100,0 1100,1006 630,503" fill={GELB} />
+
+      {/* Weiße Deckfläche */}
+      <polygon points="1100,0 2050,0 1540,503 1100,503" fill={WEISS} />
+
+      {/* Blaue Bodenfläche */}
+      <polygon points="630,503 1100,503 1540,503 2050,1006 1100,1006" fill={BLAU} />
+
+      {/* Rechtes blaues Dreieck */}
+      <polygon points="2050,0 2752,0 2752,1006 2050,1006 1540,503" fill={BLAU} />
+
+      {/* Kleines gelbes Dreieck unten rechts */}
+      <polygon points="2050,1006 2752,1006 2752,693" fill={GELB} />
     </svg>
   )
 }
@@ -105,16 +129,18 @@ export default function LoginScreen() {
             fontWeight: 800,
             color: '#ffffff',
             letterSpacing: '-.03em',
-            lineHeight: 1,
-            margin: '0 0 20px',
+            lineHeight: 1.05,
+            margin: '0 0 18px',
           }}>Willkommen!</h1>
           <p style={{
             fontSize: '19px',
-            color: '#a6abc4',
-            lineHeight: 1.6,
+            fontWeight: 400,
+            color: '#ffffff',
+            lineHeight: 1.55,
             margin: 0,
+            opacity: 0.72,
           }}>
-            Bereit für kluge Entscheidungen und<br />erfolgreiche Planungen?
+            Bereit für kluge Entscheidungen und erfolgreiche Planungen?
           </p>
         </div>
 
