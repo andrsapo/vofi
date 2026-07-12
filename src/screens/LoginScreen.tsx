@@ -67,7 +67,7 @@ export default function LoginScreen() {
         {/* Logo */}
         <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0', zIndex: 1 }}>
           <span style={{
-            background: '#f6c945',
+            background: '#f2d551',
             borderRadius: '50%',
             width: '38px', height: '38px',
             minWidth: '38px', minHeight: '38px',
