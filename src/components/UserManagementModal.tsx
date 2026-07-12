@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Person, Rolle } from '../types'
 import { erpRepository } from '../data/erpRepository'
+import { supabase } from '../lib/supabaseClient'
 import { Avatar } from './ui'
 import { IconKamera, IconSchliessen } from './icons'
 
@@ -10,10 +11,6 @@ function neueInitialen(name: string): string {
   const teile = name.trim().split(/\s+/)
   if (teile.length >= 2) return (teile[0][0] + teile[teile.length - 1][0]).toUpperCase()
   return name.slice(0, 2).toUpperCase()
-}
-
-function neueId(): string {
-  return 'p-' + Math.random().toString(36).slice(2, 9)
 }
 
 const FARBEN = ['#5b8def', '#2f9ec4', '#2fae7e', '#d2699e', '#7a86d6', '#b0873c', '#e8964b', '#9a6ee8']
@@ -34,6 +31,8 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
   const [neuModus, setNeuModus] = useState(false)
   const [neuerEntwurf, setNeuerEntwurf] = useState<Entwurf>(leererEntwurf())
   const [loeschKandidat, setLoeschKandidat] = useState<Person | null>(null)
+  const [einladenStatus, setEinladenStatus] = useState<'idle' | 'sending' | 'sent' | 'error'>('idle')
+  const [einladenFehler, setEinladenFehler] = useState<string | null>(null)
   const dateiInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -60,6 +59,8 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
 
   function aendereNeu<K extends keyof Entwurf>(feld: K, wert: Entwurf[K]) {
     setNeuerEntwurf((prev) => ({ ...prev, [feld]: wert }))
+    setEinladenStatus('idle')
+    setEinladenFehler(null)
   }
 
   function speichern() {
@@ -84,20 +85,53 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
     setLoeschKandidat(null)
   }
 
-  function neuerBeraterSpeichern() {
-    const initialen = neueInitialen(neuerEntwurf.name) || 'NN'
-    const person: Person = {
-      ...neuerEntwurf,
-      id: neueId(),
-      initialen,
-      farbe: neuerEntwurf.farbe || FARBEN[Math.floor(Math.random() * FARBEN.length)],
+  async function einladen() {
+    if (!neuerEntwurf.email || !neuerEntwurf.name) return
+    setEinladenStatus('sending')
+    setEinladenFehler(null)
+    try {
+      const { data: { session } } = await supabase.auth.getSession()
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/invite-user`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${session?.access_token ?? ''}`,
+          },
+          body: JSON.stringify({
+            email: neuerEntwurf.email,
+            name: neuerEntwurf.name,
+            rolle: neuerEntwurf.rolle,
+          }),
+        }
+      )
+      const json = await res.json()
+      if (!res.ok) {
+        setEinladenStatus('error')
+        setEinladenFehler(json.error ?? 'Fehler beim Einladen.')
+        return
+      }
+      setEinladenStatus('sent')
+      // Nutzer lokal als Person anlegen (Supabase-ID noch nicht bekannt → temporäre ID)
+      const tempId = 'pending-' + Date.now()
+      const person: Person = {
+        ...neuerEntwurf,
+        id: json.id ?? tempId,
+        initialen: neueInitialen(neuerEntwurf.name) || 'NN',
+        farbe: neuerEntwurf.farbe || FARBEN[Math.floor(Math.random() * FARBEN.length)],
+      }
+      erpRepository.fuegePersonHinzu(person)
+      const neu = erpRepository.ladePersonen()
+      setPersonen(neu)
+      setAusgewaehltId(person.id)
+      setNeuModus(false)
+      setNeuerEntwurf(leererEntwurf())
+      setEinladenStatus('idle')
+    } catch {
+      setEinladenStatus('error')
+      setEinladenFehler('Netzwerkfehler. Bitte versuchen Sie es erneut.')
     }
-    erpRepository.fuegePersonHinzu(person)
-    const neu = erpRepository.ladePersonen()
-    setPersonen(neu)
-    setAusgewaehltId(person.id)
-    setNeuModus(false)
-    setNeuerEntwurf(leererEntwurf())
   }
 
   function handleBildUpload(e: React.ChangeEvent<HTMLInputElement>, fuerNeu = false) {
@@ -115,6 +149,8 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
 
   const anzeigeEntwurf = neuModus ? neuerEntwurf : aktuellerEntwurf
   const isNeu = neuModus
+
+  const einladenMoeglich = isNeu && neuerEntwurf.name.trim().length > 0 && /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(neuerEntwurf.email ?? '')
 
   return (
     <div className="es-overlay" onMouseDown={(e) => { if (e.target === e.currentTarget) onClose() }}>
@@ -138,10 +174,11 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
             <button
               type="button"
               className="um-neu-btn"
-              onClick={() => { setNeuModus(true); setAusgewaehltId(null) }}
+              onClick={() => { setNeuModus(true); setAusgewaehltId(null); setEinladenStatus('idle'); setEinladenFehler(null) }}
             >
-              + Neuer Nutzer
-            </button>            {personen.map((p) => (
+              + Neuer Nutzer einladen
+            </button>
+            {personen.map((p) => (
               <button
                 key={p.id}
                 type="button"
@@ -213,6 +250,11 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
                       </select>
                     </div>
                     <div className="es-feld">
+                      <label className="es-label" htmlFor="um-email">E-Mail {isNeu && <span style={{ color: '#c0392b' }}>*</span>}</label>
+                      <input id="um-email" type="email" className="es-input" value={anzeigeEntwurf.email ?? ''}
+                        onChange={(e) => isNeu ? aendereNeu('email', e.target.value) : aendere('email', e.target.value)} />
+                    </div>
+                    <div className="es-feld">
                       <label className="es-label" htmlFor="um-fachgebiet">Fachgebiet</label>
                       <input id="um-fachgebiet" type="text" className="es-input" value={anzeigeEntwurf.fachgebiet ?? ''}
                         onChange={(e) => isNeu ? aendereNeu('fachgebiet', e.target.value) : aendere('fachgebiet', e.target.value)} />
@@ -226,11 +268,6 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
                       <label className="es-label" htmlFor="um-telefon">Telefon</label>
                       <input id="um-telefon" type="text" className="es-input" value={anzeigeEntwurf.telefon ?? ''}
                         onChange={(e) => isNeu ? aendereNeu('telefon', e.target.value) : aendere('telefon', e.target.value)} />
-                    </div>
-                    <div className="es-feld">
-                      <label className="es-label" htmlFor="um-email">E-Mail</label>
-                      <input id="um-email" type="email" className="es-input" value={anzeigeEntwurf.email ?? ''}
-                        onChange={(e) => isNeu ? aendereNeu('email', e.target.value) : aendere('email', e.target.value)} />
                     </div>
                     <div className="es-feld">
                       <label className="es-label" htmlFor="um-sprachen">Sprachen</label>
@@ -248,6 +285,23 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
                     <textarea id="um-bio" className="es-textarea" rows={3} value={anzeigeEntwurf.bio ?? ''}
                       onChange={(e) => isNeu ? aendereNeu('bio', e.target.value) : aendere('bio', e.target.value)} />
                   </div>
+
+                  {/* Einladen-Status-Meldung */}
+                  {isNeu && einladenStatus === 'error' && einladenFehler && (
+                    <div style={{
+                      background: '#fdeae6', border: '1px solid #f5c9be', borderRadius: '8px',
+                      padding: '10px 14px', fontSize: '13px', color: '#c0392b', marginTop: '8px',
+                    }}>
+                      {einladenFehler}
+                    </div>
+                  )}
+                  {isNeu && (
+                    <div style={{
+                      fontSize: '12.5px', color: '#6b7180', marginTop: '8px', lineHeight: 1.5,
+                    }}>
+                      Der Nutzer erhält eine Einladungs-E-Mail und wird beim ersten Login aufgefordert, ein eigenes Passwort zu setzen.
+                    </div>
+                  )}
                 </div>
 
                 <div className="es-fuss es-fuss--loeschen">
@@ -261,20 +315,31 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
                   )}
                   <div className="es-fuss__rechts">
                     <button type="button" className="es-btn es-btn--abbrechen"
-                      onClick={onClose}>
+                      onClick={isNeu ? () => { setNeuModus(false); setAusgewaehltId(personen[0]?.id ?? null) } : onClose}>
                       Abbrechen
                     </button>
-                    <button type="button"
-                      className={`es-btn es-btn--speichern${(isNeu ? neuerEntwurf.name.trim() : hatAenderungen) ? ' es-btn--speichern-aktiv' : ''}`}
-                      disabled={isNeu && !neuerEntwurf.name.trim()}
-                      onClick={() => { isNeu ? neuerBeraterSpeichern() : speichern() }}>
-                      Speichern
-                    </button>
+                    {isNeu ? (
+                      <button
+                        type="button"
+                        className={`es-btn es-btn--speichern${einladenMoeglich ? ' es-btn--speichern-aktiv' : ''}`}
+                        disabled={!einladenMoeglich || einladenStatus === 'sending'}
+                        onClick={einladen}
+                      >
+                        {einladenStatus === 'sending' ? 'Einladung wird gesendet…' : 'Einladung senden'}
+                      </button>
+                    ) : (
+                      <button type="button"
+                        className={`es-btn es-btn--speichern${hatAenderungen ? ' es-btn--speichern-aktiv' : ''}`}
+                        disabled={!hatAenderungen}
+                        onClick={speichern}>
+                        Speichern
+                      </button>
+                    )}
                   </div>
                 </div>
               </>
             ) : (
-              <div className="um-leer">Bitte einen Nutzer auswählen oder neu anlegen.</div>
+              <div className="um-leer">Bitte einen Nutzer auswählen oder neu einladen.</div>
             )}
           </div>
         </div>

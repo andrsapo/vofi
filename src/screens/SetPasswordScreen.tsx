@@ -1,28 +1,30 @@
 import { useState, FormEvent } from 'react'
 import { useAuthContext } from '../auth/AuthContext'
 
-export default function LoginScreen() {
-  const { signIn } = useAuthContext()
-  const [email, setEmail] = useState('')
+export default function SetPasswordScreen() {
+  const { updatePassword, session } = useAuthContext()
   const [password, setPassword] = useState('')
+  const [passwordConfirm, setPasswordConfirm] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  function errorText(msg: string): string {
-    if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials'))
-      return 'E-Mail oder Passwort ist falsch.'
-    if (msg.includes('Email not confirmed'))
-      return 'Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.'
-    return msg
-  }
+  const name = session?.user?.user_metadata?.name ?? session?.user?.email ?? ''
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
     setError(null)
+    if (password !== passwordConfirm) {
+      setError('Die Passwörter stimmen nicht überein.')
+      return
+    }
+    if (password.length < 8) {
+      setError('Das Passwort muss mindestens 8 Zeichen lang sein.')
+      return
+    }
     setLoading(true)
-    const err = await signIn(email, password)
+    const err = await updatePassword(password)
     setLoading(false)
-    if (err) setError(errorText(err.message))
+    if (err) setError(err.message)
   }
 
   return (
@@ -69,34 +71,38 @@ export default function LoginScreen() {
 
         {/* Form */}
         <div style={{ padding: '32px 36px 36px' }}>
-          <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '24px' }}>
-            Anmelden
+          <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '8px' }}>
+            Willkommen{name ? `, ${name}` : ''}!
           </div>
+          <div style={{ fontSize: '14px', color: '#6b7180', marginBottom: '24px', lineHeight: 1.6 }}>
+            Bitte legen Sie ein persönliches Passwort fest, um Ihr Konto zu aktivieren.
+          </div>
+
           <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             <label className="es-label">
-              E-Mail
-              <input
-                className="es-input"
-                type="email"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-                placeholder="name@unternehmen.de"
-                required
-                autoComplete="email"
-                style={{ marginTop: '6px' }}
-              />
-            </label>
-
-            <label className="es-label">
-              Passwort
+              Neues Passwort
               <input
                 className="es-input"
                 type="password"
                 value={password}
                 onChange={e => setPassword(e.target.value)}
-                placeholder="Passwort eingeben"
+                placeholder="Mindestens 8 Zeichen"
                 required
-                autoComplete="current-password"
+                autoComplete="new-password"
+                style={{ marginTop: '6px' }}
+              />
+            </label>
+
+            <label className="es-label">
+              Passwort bestätigen
+              <input
+                className="es-input"
+                type="password"
+                value={passwordConfirm}
+                onChange={e => setPasswordConfirm(e.target.value)}
+                placeholder="Passwort wiederholen"
+                required
+                autoComplete="new-password"
                 style={{ marginTop: '6px' }}
               />
             </label>
@@ -125,7 +131,7 @@ export default function LoginScreen() {
                 transition: 'background .15s, box-shadow .15s',
               }}
             >
-              {loading ? 'Bitte warten…' : 'Anmelden'}
+              {loading ? 'Bitte warten…' : 'Passwort festlegen & anmelden'}
             </button>
           </form>
         </div>

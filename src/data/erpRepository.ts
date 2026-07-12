@@ -6,6 +6,12 @@
 
 import type { Person, Rolle } from '../types'
 
+function neueInitialen(name: string): string {
+  const teile = name.trim().split(/\s+/)
+  if (teile.length >= 2) return (teile[0][0] + teile[teile.length - 1][0]).toUpperCase()
+  return name.slice(0, 2).toUpperCase()
+}
+
 /** Roh-Objektstammdaten, wie sie die ERP-API liefern würde */
 export interface ErpObjekt {
   id: string
@@ -214,17 +220,36 @@ export const erpRepository: ErpRepository = new MockErpRepository()
 
 /** Stellt sicher, dass ein Supabase-Nutzer als Person in localStorage existiert.
  *  Wird einmalig nach dem Login aufgerufen. */
-export function sicherstelleNutzer(supabaseUser: { id: string; email: string }): void {
+export function sicherstelleNutzer(supabaseUser: { id: string; email: string; name?: string; rolle?: string }): void {
   const vorhanden = MOCK_PERSONEN.find((p) => p.id === supabaseUser.id)
-  if (vorhanden) return
-  const name = supabaseUser.email.split('@')[0]
+  if (vorhanden) {
+    // Name + Rolle aus Metadaten aktualisieren falls vorhanden
+    let changed = false
+    if (supabaseUser.name && vorhanden.name !== supabaseUser.name) {
+      vorhanden.name = supabaseUser.name
+      vorhanden.initialen = neueInitialen(supabaseUser.name)
+      changed = true
+    }
+    if (supabaseUser.rolle && vorhanden.rolle !== supabaseUser.rolle) {
+      vorhanden.rolle = supabaseUser.rolle as Person['rolle']
+      vorhanden.istAdmin = supabaseUser.rolle === 'Administrator'
+      changed = true
+    }
+    if (changed) {
+      speichereInStorage(MOCK_PERSONEN)
+      window.dispatchEvent(new CustomEvent('erpchange'))
+    }
+    return
+  }
+  const nameRaw = supabaseUser.name || supabaseUser.email.split('@')[0]
+  const rolle = (supabaseUser.rolle as Person['rolle']) || 'Administrator'
   const person: Person = {
     id: supabaseUser.id,
-    name,
-    rolle: 'Administrator',
-    initialen: name.slice(0, 2).toUpperCase(),
+    name: nameRaw,
+    rolle,
+    initialen: neueInitialen(nameRaw),
     farbe: '#5b8def',
-    istAdmin: true,
+    istAdmin: rolle === 'Administrator',
     email: supabaseUser.email,
   }
   MOCK_PERSONEN.push(person)

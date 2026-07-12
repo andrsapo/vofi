@@ -5,6 +5,7 @@ import { StoreProvider } from './state/store'
 import { AuthProvider, useAuthContext } from './auth/AuthContext'
 import { sicherstelleNutzer } from './data/erpRepository'
 import LoginScreen from './screens/LoginScreen'
+import SetPasswordScreen from './screens/SetPasswordScreen'
 import './theme/tokens.css'
 import './styles/app.css'
 
@@ -17,9 +18,7 @@ function AppLadebildschirm() {
       alignItems: 'center',
       justifyContent: 'center',
     }}>
-      <div style={{
-        display: 'flex', alignItems: 'center', gap: '1px',
-      }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '1px' }}>
         <span style={{
           background: 'var(--color-accent)', borderRadius: '50%',
           width: '38px', height: '38px', display: 'inline-flex',
@@ -36,16 +35,23 @@ function BootstrapLayer({ children }: { children: React.ReactNode }) {
   const { session } = useAuthContext()
   useEffect(() => {
     if (session?.user) {
-      sicherstelleNutzer({ id: session.user.id, email: session.user.email ?? '' })
+      const meta = session.user.user_metadata ?? {}
+      sicherstelleNutzer({
+        id: session.user.id,
+        email: session.user.email ?? '',
+        name: meta.name,
+        rolle: meta.rolle,
+      })
     }
   }, [session?.user?.id])
   return <>{children}</>
 }
 
 function AuthGate() {
-  const { session, loading } = useAuthContext()
+  const { session, loading, mustSetPassword } = useAuthContext()
   if (loading) return <AppLadebildschirm />
   if (!session) return <LoginScreen />
+  if (mustSetPassword) return <SetPasswordScreen />
   return (
     <StoreProvider nutzerId={session.user.id}>
       <BootstrapLayer>
