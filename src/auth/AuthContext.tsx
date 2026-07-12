@@ -19,18 +19,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [mustSetPassword, setMustSetPassword] = useState(false)
 
   useEffect(() => {
+    // Einladungslink enthält #access_token=...&type=invite im URL-Hash.
+    // Supabase verarbeitet diesen automatisch über onAuthStateChange,
+    // aber nur wenn der Client initialisiert ist. Wir lesen zusätzlich
+    // den Hash aus, um sicherzustellen dass mustSetPassword gesetzt wird.
+    const hash = window.location.hash
+    if (hash.includes('type=invite') || hash.includes('type=recovery')) {
+      setMustSetPassword(true)
+    }
+
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, s) => {
       setSession(s)
       setLoading(false)
-      // Eingeladener Nutzer landet mit SIGNED_IN nach Klick auf Einladungslink
-      // und hat mustSetPassword=true in user_metadata gesetzt
-      if (event === 'SIGNED_IN' && s?.user?.user_metadata?.mustSetPassword === true) {
+      if (s?.user?.user_metadata?.mustSetPassword === true) {
         setMustSetPassword(true)
       }
       if (event === 'SIGNED_OUT') {
         setMustSetPassword(false)
       }
-      // Nach erfolgreichem Passwort-Update: Flag zurücksetzen
       if (event === 'USER_UPDATED') {
         setMustSetPassword(false)
       }
