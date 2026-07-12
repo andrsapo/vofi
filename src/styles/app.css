@@ -992,6 +992,7 @@ textarea {
   width: 100%;
   border-collapse: collapse;
   font-size: 13.5px;
+  table-layout: fixed;
 }
 .soll-ist th {
   text-align: left;
@@ -4896,6 +4897,7 @@ button.liste__zeile:hover {
   grid-template-columns: 230px 1fr;
   flex: 1;
   overflow: hidden;
+  height: 520px;
 }
 .um-liste {
   border-right: 1px solid #f0f0f4;

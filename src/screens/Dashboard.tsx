@@ -769,6 +769,12 @@ function SollIstTabelle() {
         </button>
       </div>
       <table className="soll-ist">
+        <colgroup>
+          <col style={{ width: '40%' }} />
+          <col style={{ width: '20%' }} />
+          <col style={{ width: '20%' }} />
+          <col style={{ width: '20%' }} />
+        </colgroup>
         <thead>
           <tr>
             <SortKopf spalte="position" label="Position" />
