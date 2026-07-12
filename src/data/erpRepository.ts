@@ -212,5 +212,22 @@ class MockErpRepository implements ErpRepository {
 
 export const erpRepository: ErpRepository = new MockErpRepository()
 
-/** Aktuell angemeldeter Nutzer (Sachbearbeiter laut Klickstrecke) */
-export const AKTUELLER_NUTZER_ID = 'p-herbert'
+/** Stellt sicher, dass ein Supabase-Nutzer als Person in localStorage existiert.
+ *  Wird einmalig nach dem Login aufgerufen. */
+export function sicherstelleNutzer(supabaseUser: { id: string; email: string }): void {
+  const vorhanden = MOCK_PERSONEN.find((p) => p.id === supabaseUser.id)
+  if (vorhanden) return
+  const name = supabaseUser.email.split('@')[0]
+  const person: Person = {
+    id: supabaseUser.id,
+    name,
+    rolle: 'Administrator',
+    initialen: name.slice(0, 2).toUpperCase(),
+    farbe: '#5b8def',
+    istAdmin: true,
+    email: supabaseUser.email,
+  }
+  MOCK_PERSONEN.push(person)
+  speichereInStorage(MOCK_PERSONEN)
+  window.dispatchEvent(new CustomEvent('erpchange'))
+}

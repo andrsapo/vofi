@@ -4,7 +4,7 @@
  * Methoden gekapselt. Die Datenschicht (ERP-Mock) bleibt austauschbar.
  */
 
-import { createContext, useContext, useSyncExternalStore, type ReactNode } from 'react'
+import { createContext, useContext, useSyncExternalStore, useState, type ReactNode } from 'react'
 import type {
   AufgabenStatus,
   Bericht,
@@ -20,7 +20,7 @@ import type {
   Szenario,
   SzenarioDaten,
 } from '../types'
-import { AKTUELLER_NUTZER_ID, erpRepository } from '../data/erpRepository'
+import { erpRepository } from '../data/erpRepository'
 import {
   erzeugeLeereErtraegeAufwendungen,
   erzeugeLeereFinanzierung,
@@ -53,10 +53,10 @@ export interface AppState {
   ui: UiState
 }
 
-function initialState(): AppState {
+function initialState(nutzerId: string): AppState {
   return {
     route: { view: 'dashboard' },
-    aktuellerNutzerId: AKTUELLER_NUTZER_ID,
+    aktuellerNutzerId: nutzerId,
     projekte: [],
     objektIst: {},
     szenarien: [],
@@ -90,7 +90,7 @@ interface PersistedState {
   data: Pick<AppState, 'aktuellerNutzerId' | 'projekte' | 'objektIst' | 'szenarien' | 'szenarioDaten' | 'kommentare' | 'berichte'>
 }
 
-function ladePersistiertenState(): AppState | null {
+function ladePersistiertenState(nutzerId: string): AppState | null {
   if (typeof window === 'undefined') return null
   try {
     const raw = window.localStorage.getItem(STORAGE_KEY)
@@ -98,10 +98,10 @@ function ladePersistiertenState(): AppState | null {
     const parsed = JSON.parse(raw) as PersistedState
     if (parsed.v !== STORAGE_VERSION) return null
     return {
-      ...initialState(),
+      ...initialState(nutzerId),
       ...parsed.data,
-      // UI-Zustand nicht aus dem Storage holen – frisch auf Standard.
-      ui: initialState().ui,
+      aktuellerNutzerId: nutzerId,
+      ui: initialState(nutzerId).ui,
       route: { view: 'dashboard' },
     }
   } catch {
@@ -131,9 +131,13 @@ function speichereState(state: AppState): void {
 }
 
 export class Store {
-  state: AppState = ladePersistiertenState() ?? initialState()
+  state: AppState
   private version = 0
   private listeners = new Set<() => void>()
+
+  constructor(nutzerId: string) {
+    this.state = ladePersistiertenState(nutzerId) ?? initialState(nutzerId)
+  }
 
   subscribe = (listener: () => void): (() => void) => {
     this.listeners.add(listener)
@@ -160,7 +164,7 @@ export class Store {
         /* still */
       }
     }
-    this.state = initialState()
+    this.state = initialState(this.state.aktuellerNutzerId)
     this.version += 1
     this.listeners.forEach((l) => l())
   }
@@ -713,20 +717,23 @@ export class Store {
   }
 }
 
-const store = new Store()
-const StoreContext = createContext<Store>(store)
+const StoreContext = createContext<Store | null>(null)
 
-export function StoreProvider({ children }: { children: ReactNode }) {
+export function StoreProvider({ children, nutzerId }: { children: ReactNode; nutzerId: string }) {
+  const [store] = useState(() => new Store(nutzerId))
   return <StoreContext.Provider value={store}>{children}</StoreContext.Provider>
 }
 
 export function useStore(): Store {
-  return useContext(StoreContext)
+  const s = useContext(StoreContext)
+  if (!s) throw new Error('useStore muss innerhalb von StoreProvider verwendet werden')
+  return s
 }
 
 /** Abonniert den Store und liefert den aktuellen Zustand */
 export function useApp(): AppState {
   const s = useContext(StoreContext)
+  if (!s) throw new Error('useApp muss innerhalb von StoreProvider verwendet werden')
   useSyncExternalStore(s.subscribe, s.getVersion)
   return s.state
 }

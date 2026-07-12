@@ -5,6 +5,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { BENACHRICHTIGUNGEN_SEED } from '../data/benachrichtigungen'
 import { erpRepository } from '../data/erpRepository'
 import { useApp, useStore } from '../state/store'
+import { useAuthContext } from '../auth/AuthContext'
 import { Avatar, StatusBadge } from './ui'
 import { BenachrichtigungenPanel } from './BenachrichtigungenPanel'
 import { MeinProfilModal } from './MeinProfilModal'
@@ -22,6 +23,7 @@ import {
 
 export function NutzerBereich() {
   const app = useApp()
+  const { signOut } = useAuthContext()
   const [nutzer, setNutzer] = useState(() => erpRepository.ladePerson(app.aktuellerNutzerId))
   const [panelOffen, setPanelOffen] = useState(false)
   const [menuOffen, setMenuOffen] = useState(false)
@@ -81,7 +83,7 @@ export function NutzerBereich() {
                 Mein Profil
               </button>
               <button type="button" className="topbar__profil-option topbar__profil-option--abmelden"
-                onClick={() => setMenuOffen(false)}>
+                onClick={() => { setMenuOffen(false); signOut() }}>
                 Abmelden
               </button>
             </div>
