@@ -106,10 +106,11 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
           }),
         }
       )
-      const json = await res.json()
+      let json: { id?: string; error?: string } = {}
+      try { json = await res.json() } catch { /* leere Antwort */ }
       if (!res.ok) {
         setEinladenStatus('error')
-        setEinladenFehler(json.error ?? 'Fehler beim Einladen.')
+        setEinladenFehler(json.error ?? `Fehler ${res.status}. Bitte versuchen Sie es erneut.`)
         return
       }
       setEinladenStatus('sent')

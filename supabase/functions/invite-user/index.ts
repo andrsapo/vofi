@@ -18,7 +18,7 @@ Deno.serve(async (req) => {
       { auth: { autoRefreshToken: false, persistSession: false } }
     )
 
-    // Aufrufenden Nutzer prüfen (muss Administrator sein)
+    // Aufrufenden Nutzer prüfen (muss eingeloggt sein)
     const authHeader = req.headers.get('Authorization')
     if (!authHeader) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
 
@@ -26,11 +26,6 @@ Deno.serve(async (req) => {
       authHeader.replace('Bearer ', '')
     )
     if (callerErr || !caller) return new Response('Unauthorized', { status: 401, headers: corsHeaders })
-
-    const callerMeta = caller.user_metadata ?? {}
-    if (callerMeta.rolle !== 'Administrator') {
-      return new Response('Forbidden: only administrators can invite users', { status: 403, headers: corsHeaders })
-    }
 
     const { email, name, rolle } = await req.json() as { email: string; name: string; rolle: string }
 
