@@ -156,7 +156,6 @@ export default function LoginScreen() {
                 type="email"
                 value={email}
                 onChange={e => { setEmail(e.target.value); setTouchedEmail(true) }}
-                onBlur={() => setTouchedEmail(true)}
                 placeholder="name@unternehmen.de"
                 autoComplete="email"
                 style={{
