@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Person, Rolle } from '../types'
 import { erpRepository } from '../data/erpRepository'
 import { supabase } from '../lib/supabaseClient'
+import { useApp } from '../state/store'
 import { Avatar } from './ui'
 import { IconKamera, IconSchliessen } from './icons'
 
@@ -25,6 +26,7 @@ function leererEntwurf(): Entwurf {
 }
 
 export function UserManagementModal({ onClose }: { onClose: () => void }) {
+  const { aktuellerNutzerId } = useApp()
   const [personen, setPersonen] = useState<Person[]>(() => erpRepository.ladePersonen())
   const [ausgewaehltId, setAusgewaehltId] = useState<string | null>(personen[0]?.id ?? null)
   const [entwuerfe, setEntwuerfe] = useState<Record<string, Entwurf>>({})
@@ -308,7 +310,10 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
                 <div className="es-fuss es-fuss--loeschen">
                   {!isNeu ? (
                     <button type="button" className="es-btn es-btn--loeschen"
-                      onClick={() => ausgewaehltePerson && setLoeschKandidat(ausgewaehltePerson)}>
+                      disabled={ausgewaehltId === aktuellerNutzerId}
+                      title={ausgewaehltId === aktuellerNutzerId ? 'Sie können sich nicht selbst löschen.' : undefined}
+                      style={ausgewaehltId === aktuellerNutzerId ? { opacity: 0.4, cursor: 'default' } : undefined}
+                      onClick={() => ausgewaehltePerson && ausgewaehltId !== aktuellerNutzerId && setLoeschKandidat(ausgewaehltePerson)}>
                       Löschen
                     </button>
                   ) : (
