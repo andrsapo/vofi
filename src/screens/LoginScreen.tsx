@@ -3,56 +3,15 @@ import { useAuthContext } from '../auth/AuthContext'
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
-/* Markengrafik als inline SVG – Seitenverhältnis 2752:1006, exakt nach login-grafik.png */
+/* Markengrafik – login-grafik.png, Seitenverhältnis 2752:1006 */
 function LoginGrafik() {
-  // Isometrischer Würfel/Raum:
-  // Mittelpunkt des Würfels liegt bei etwa x=1376 (Mitte), y=503 (Mitte)
-  // Obere Kante bei y=0, untere bei y=1006
-  // Linke Spitze bei ~x=630, Rechte bei ~x=2120
-  // Scheitelpunkt oben bei ~x=1100, Scheitelpunkt unten bei ~x=1650
-  const BG = '#12142a'
-  const BLAU = '#5b8fdc'
-  const GELB = '#e8b832'
-  const WEISS = '#ffffff'
-
-  // Kernpunkte des Würfels (aus der Referenz abgemessen):
-  // A = obere Kante links  (630, 0)
-  // B = obere Kante rechts (2120, 0)  [oben rechts, Deckel]
-  // C = Würfel-Mitte oben  (1376, 372) [Scheitel oben]
-  // D = Würfel-Mitte unten (1376, 634) [Scheitel unten]
-  // E = untere Kante links (630, 1006)
-  // F = untere Kante rechts(2120, 1006)
-
   return (
-    <svg
-      viewBox="0 0 2752 1006"
-      xmlns="http://www.w3.org/2000/svg"
-      style={{ width: '100%', height: 'auto', display: 'block' }}
+    <img
+      src="/login-grafik.png"
+      alt=""
       aria-hidden="true"
-    >
-      <rect width="2752" height="1006" fill={BG} />
-
-      {/* Linkes blaues Dreieck: Spitze bei Würfel-Mitte-links */}
-      <polygon points="0,210 630,503 0,796" fill={BLAU} />
-
-      {/* Kleines weißes Dreieck unten links */}
-      <polygon points="0,796 200,1006 0,1006" fill={WEISS} />
-
-      {/* Gelbe linke Würfelfläche */}
-      <polygon points="630,503 1100,0 1100,1006 630,503" fill={GELB} />
-
-      {/* Weiße Deckfläche */}
-      <polygon points="1100,0 2050,0 1540,503 1100,503" fill={WEISS} />
-
-      {/* Blaue Bodenfläche */}
-      <polygon points="630,503 1100,503 1540,503 2050,1006 1100,1006" fill={BLAU} />
-
-      {/* Rechtes blaues Dreieck */}
-      <polygon points="2050,0 2752,0 2752,1006 2050,1006 1540,503" fill={BLAU} />
-
-      {/* Kleines gelbes Dreieck unten rechts */}
-      <polygon points="2050,1006 2752,1006 2752,693" fill={GELB} />
-    </svg>
+      style={{ width: '100%', height: 'auto', display: 'block' }}
+    />
   )
 }
 
