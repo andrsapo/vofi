@@ -1,0 +1,284 @@
+- generic [active] [ref=e1]:
+  - navigation [ref=e2]:
+    - generic [ref=e3]:
+      - link "immo logy" [ref=e4] [cursor=pointer]:
+        - /url: "#"
+        - generic [ref=e5]: immo
+        - generic [ref=e6]: logy
+      - generic [ref=e7]:
+        - link "Software" [ref=e8] [cursor=pointer]:
+          - /url: "#produkt"
+        - link "Warum immology" [ref=e9] [cursor=pointer]:
+          - /url: "#problem"
+        - link "Video ansehen" [ref=e10] [cursor=pointer]:
+          - /url: "#video"
+        - link "Features" [ref=e11] [cursor=pointer]:
+          - /url: "#features"
+        - link "Referenzen" [ref=e12] [cursor=pointer]:
+          - /url: "#referenzen"
+      - link "Demo buchen →":
+        - /url: "#demo"
+  - generic [ref=e13]:
+    - generic [ref=e18]:
+      - generic [ref=e19]: VoFi-Software für die Wohnungswirtschaft
+      - heading "Investitionsentscheidungen, die standhalten." [level=1] [ref=e20]:
+        - text: Investitionsentscheidungen,
+        - text: die
+        - emphasis [ref=e21]: standhalten.
+      - paragraph [ref=e22]:
+        - text: Der Vollständige Finanzplan, digitalisiert —
+        - text: validierte Eingaben, automatische Steuermodellierung, belastbare Renditekennzahlen in Minuten.
+      - generic [ref=e23]:
+        - link "Demo buchen" [ref=e24] [cursor=pointer]:
+          - /url: "#demo"
+          - img [ref=e25]
+          - text: Demo buchen
+        - link "Video ansehen" [ref=e27] [cursor=pointer]:
+          - /url: "#video"
+          - img [ref=e28]
+          - text: Video ansehen
+      - generic [ref=e30]:
+        - generic [ref=e31]:
+          - img [ref=e32]
+          - text: DSGVO-konform
+        - generic [ref=e34]:
+          - img [ref=e35]
+          - text: In Stunden einsatzbereit
+        - generic [ref=e38]:
+          - img [ref=e39]
+          - text: Hosting in Deutschland
+    - generic [ref=e42]:
+      - generic [ref=e43]: Mehr erfahren
+      - img [ref=e44]
+  - generic [ref=e46]:
+    - generic [ref=e49]:
+      - generic [ref=e50]:
+        - generic [ref=e51]: 0h
+        - generic [ref=e52]: statt 2 Tagen
+        - generic [ref=e53]: für eine vollständige VoFi-Analyse
+      - generic [ref=e54]:
+        - generic [ref=e55]: 0%
+        - generic [ref=e56]: validierte Eingaben
+        - generic [ref=e57]: jede Annahme automatisch geprüft
+      - generic [ref=e58]:
+        - generic [ref=e59]: "0"
+        - generic [ref=e60]: Kennzahlen sofort
+        - generic [ref=e61]: EK-Rendite, Cashflow, Endwert u. a.
+    - generic [ref=e63]:
+      - generic [ref=e64]:
+        - text: Die Software
+        - heading "Sehen Sie, womit Ihre Analysten täglich arbeiten" [level=2] [ref=e65]:
+          - text: Sehen Sie, womit Ihre Analysten
+          - text: täglich arbeiten
+        - paragraph [ref=e66]: Nicht ein Mockup — reale Ansichten aus dem Produktivsystem.
+      - img "immology – Produktansicht" [ref=e67]
+    - generic [ref=e69]:
+      - generic [ref=e70]:
+        - text: Warum immology
+        - heading "Excel-Fehler kosten mehr als die Software-Lizenz" [level=2] [ref=e71]:
+          - text: Excel-Fehler kosten mehr
+          - text: als die Software-Lizenz
+        - paragraph [ref=e72]: Ein falscher AfA-Satz, eine veraltete Zinsstruktur — und die ausgewiesene Eigenkapitalrendite weicht um Prozentpunkte ab.
+      - generic [ref=e73]:
+        - generic [ref=e74]:
+          - generic [ref=e75]: Bisher
+          - heading "Manuelle Excel-Modelle" [level=3] [ref=e76]
+          - generic [ref=e77]:
+            - generic [ref=e78]:
+              - img [ref=e80]
+              - generic [ref=e82]: Fehleranfällige Formeln — ein falscher Satz verzerrt den gesamten Finanzplan
+            - generic [ref=e83]:
+              - img [ref=e85]
+              - generic [ref=e87]: Keine einheitliche Datenbasis — Versionschaos, Reviews dauern Stunden
+            - generic [ref=e88]:
+              - img [ref=e90]
+              - generic [ref=e92]: Steuerliche Effekte (AfA, Zinsen) manuell geschätzt oder vergessen
+            - generic [ref=e93]:
+              - img [ref=e95]
+              - generic [ref=e97]: Szenarienvergleiche nur durch manuelle Kopien — Inkonsistenz vorprogrammiert
+            - generic [ref=e98]:
+              - img [ref=e100]
+              - generic [ref=e102]: Kein Audit-Trail — Annahmen nicht nachvollziehbar, keine Revisionssicherheit
+        - img [ref=e105]
+        - generic [ref=e107]:
+          - generic [ref=e108]: Mit immology
+          - heading "Automatisierte VoFi-Engine" [level=3] [ref=e109]
+          - generic [ref=e110]:
+            - generic [ref=e111]:
+              - img [ref=e113]
+              - generic [ref=e115]: Eingabe-Validierung in Echtzeit — Fehler werden gemeldet, bevor sie zählen
+            - generic [ref=e116]:
+              - img [ref=e118]
+              - generic [ref=e120]: Alle Parameter strukturiert — eine Quelle der Wahrheit für das gesamte Team
+            - generic [ref=e121]:
+              - img [ref=e123]
+              - generic [ref=e125]: AfA, Zinsstrukturen und Tilgungspläne automatisch modelliert und aktualisiert
+            - generic [ref=e126]:
+              - img [ref=e128]
+              - generic [ref=e130]: Szenariovergleich (Basis / Optimistisch / Pessimistisch) per Klick
+            - generic [ref=e131]:
+              - img [ref=e133]
+              - generic [ref=e135]: Vollständiger Audit-Trail — revisionssicher, jede Änderung dokumentiert
+    - generic [ref=e137]:
+      - generic [ref=e138]:
+        - text: Herausforderung & Lösung
+        - heading "Präzise Investitionsrechnung für die Wohnungswirtschaft" [level=2] [ref=e139]:
+          - text: Präzise Investitionsrechnung
+          - text: für die Wohnungswirtschaft
+        - paragraph [ref=e140]: Gestiegene Kosten und ESG-Kriterien erfordern absolut fehlerfreie Berechnungen. Dieses Video skizziert die Hürden des Vollständigen Finanzplans und erklärt, wie immology Zahlungsströme und Steuerprofile zuverlässig digital verknüpft.
+      - img [ref=e144] [cursor=pointer]
+      - paragraph [ref=e146]: Klicken zum Abspielen · Ton empfohlen
+    - generic [ref=e148]:
+      - generic [ref=e149]:
+        - text: Was immology leistet
+        - heading "Vier Kernfunktionen. Ein verlässliches Ergebnis." [level=2] [ref=e150]:
+          - text: Vier Kernfunktionen.
+          - text: Ein verlässliches Ergebnis.
+        - paragraph [ref=e151]: Entwickelt für die spezifischen Anforderungen institutioneller Asset Manager.
+      - generic [ref=e152]:
+        - generic [ref=e153]:
+          - img [ref=e155]
+          - generic [ref=e160]:
+            - heading "Parameter-Aggregation" [level=3] [ref=e161]
+            - paragraph [ref=e162]: Objekt-, Markt- und ERP-Daten werden strukturiert zusammengeführt. Manuelle Übertragungsfehler zwischen Quellen sind ausgeschlossen.
+        - generic [ref=e163]:
+          - img [ref=e165]
+          - generic [ref=e168]:
+            - heading "Intelligente Validierung" [level=3] [ref=e169]
+            - paragraph [ref=e170]: Jede Eingabe wird sofort auf Plausibilität geprüft. Das System warnt, bevor eine falsche Annahme den gesamten Finanzplan verzerrt.
+        - generic [ref=e171]:
+          - img [ref=e173]
+          - generic [ref=e176]:
+            - heading "Echtzeit-Steuermodellierung" [level=3] [ref=e177]
+            - paragraph [ref=e178]: AfA-Staffeln, Zinsstrukturen und Tilgungsverläufe dynamisch berechnet. Parameteränderungen wirken sofort auf alle Kennzahlen.
+        - generic [ref=e179]:
+          - img [ref=e181]
+          - generic [ref=e183]:
+            - heading "Transparente Renditekennzahlen" [level=3] [ref=e184]
+            - paragraph [ref=e185]: EK-Rendite, Cashflow-Verlauf und Endwert im Szenariovergleich — nachvollziehbar begründet, als PDF-Bericht exportierbar.
+    - generic [ref=e187]:
+      - generic [ref=e188]:
+        - text: Vertrauen aus der Praxis
+        - heading "Was Asset Manager sagen" [level=2] [ref=e189]
+      - generic [ref=e190]:
+        - generic [ref=e191]:
+          - text: “
+          - blockquote [ref=e192]: „Mit immology haben wir unsere Investitionsanalysen von zwei Tagen auf drei Stunden reduziert. Die Szenariovergleiche sind revisionssicher und intern sofort prüfbar — das war mit unseren bisherigen Excel-Modellen schlicht nicht möglich."
+          - generic [ref=e193]:
+            - generic [ref=e194]: TM
+            - generic [ref=e195]:
+              - generic [ref=e196]: Thomas M.
+              - generic [ref=e197]: Head of Asset Management · Wohnungsunternehmen, Süddeutschland
+        - generic [ref=e198]:
+          - text: “
+          - blockquote [ref=e199]: „Endlich haben wir ein Werkzeug, das die Komplexität des Vollständigen Finanzplans wirklich abbildet. Die automatische Steuermodellierung spart uns nicht nur Zeit — sie gibt uns Sicherheit, dass unsere Renditekennzahlen gegenüber Aufsichtsrat und Beirat standhalten."
+          - generic [ref=e200]:
+            - generic [ref=e201]: SK
+            - generic [ref=e202]:
+              - generic [ref=e203]: Sabine K.
+              - generic [ref=e204]: Leiterin Portfoliomanagement · Kommunales Wohnungsunternehmen, NRW
+        - generic [ref=e205]:
+          - text: “
+          - blockquote [ref=e206]: „Szenarien durchzuspielen war früher ein halber Arbeitstag. Heute klicken wir uns in Minuten durch Basis-, Optimistisch- und Pessimistisch-Variante — mit vollständigem Audit-Trail. Das verändert, wie wir Ankaufsentscheidungen treffen."
+          - generic [ref=e207]:
+            - generic [ref=e208]: MR
+            - generic [ref=e209]:
+              - generic [ref=e210]: Markus R.
+              - generic [ref=e211]: Kaufmännischer Vorstand · Genossenschaft, Norddeutschland
+    - generic [ref=e214]:
+      - generic [ref=e215]: Bereit?
+      - heading "Verlässliche Investitionsentscheidungen beginnen heute." [level=2] [ref=e216]:
+        - text: Verlässliche Investitionsentscheidungen
+        - text: beginnen heute.
+      - generic [ref=e217]:
+        - paragraph [ref=e218]: In wenigen Stunden einsatzbereit.
+        - link "Demo buchen" [ref=e219] [cursor=pointer]:
+          - /url: "#demo"
+          - img [ref=e220]
+          - text: Demo buchen
+        - paragraph [ref=e222]: DSGVO-konform · Hosting in Deutschland
+    - contentinfo [ref=e223]:
+      - generic [ref=e224]:
+        - generic [ref=e225]: © 2026 immology GmbH
+        - navigation [ref=e226]:
+          - link "Impressum" [ref=e227] [cursor=pointer]:
+            - /url: "#"
+          - link "Datenschutz" [ref=e228] [cursor=pointer]:
+            - /url: "#"
+          - link "AGB" [ref=e229] [cursor=pointer]:
+            - /url: "#"
+          - link "Kontakt" [ref=e230] [cursor=pointer]:
+            - /url: "#"
+  - dialog "Demo buchen" [ref=e231]:
+    - generic [ref=e232]:
+      - generic [ref=e233]:
+        - generic [ref=e234]:
+          - generic [ref=e236]: immo
+          - generic [ref=e237]: logy
+        - generic [ref=e238]: Live-Demo
+        - heading "30 Minuten, die Ihre Investitionsrechnung verändern." [level=2] [ref=e239]
+        - paragraph [ref=e240]: Wir zeigen Ihnen die VoFi-Rechnung live an einem Beispielobjekt aus Ihrem Bestand – ohne Vorbereitung Ihrerseits.
+        - generic [ref=e241]:
+          - generic [ref=e242]:
+            - generic [ref=e243]: ✓
+            - text: 30 Min. per Videocall
+          - generic [ref=e244]:
+            - generic [ref=e245]: ✓
+            - text: Live am echten Rechenbeispiel
+          - generic [ref=e246]:
+            - generic [ref=e247]: ✓
+            - text: Unverbindlich & kostenfrei
+        - generic [ref=e248]:
+          - generic [ref=e249]: MB
+          - generic [ref=e250]:
+            - generic [ref=e251]: M. Berger
+            - generic [ref=e252]: Produktberatung immology
+      - generic [ref=e253]:
+        - generic [ref=e254]:
+          - generic [ref=e255]:
+            - button "Termin buchen" [ref=e256] [cursor=pointer]
+            - button "Termin anfragen" [ref=e257] [cursor=pointer]
+          - button "Schließen" [ref=e258] [cursor=pointer]: ×
+        - generic [ref=e259]:
+          - generic [ref=e340]:
+            - generic [ref=e341]:
+              - generic [ref=e342]: ✓
+              - text: Termin wählen
+            - generic [ref=e344]:
+              - generic [ref=e345]: "2"
+              - text: Ihre Daten
+            - generic [ref=e347]:
+              - generic [ref=e348]: "3"
+              - text: Bestätigung
+          - generic [ref=e349]:
+            - generic [ref=e350]:
+              - generic [ref=e351]:
+                - generic [ref=e352]: 📅
+                - generic [ref=e353]:
+                  - generic [ref=e354]: Mo, 13.07.2026 · 10:00 Uhr
+                  - generic [ref=e355]: 30 Min. Videocall · M. Berger
+              - button "Ändern" [ref=e356] [cursor=pointer]
+            - generic [ref=e357]:
+              - generic [ref=e358]:
+                - text: Name*
+                - textbox "Name*" [ref=e359]:
+                  - /placeholder: Vor- und Nachname
+              - generic [ref=e360]:
+                - text: Unternehmen
+                - textbox "Unternehmen" [ref=e361]:
+                  - /placeholder: z. B. Wohnbau GmbH
+            - generic [ref=e362]:
+              - text: Geschäftliche E-Mail*
+              - textbox "Geschäftliche E-Mail*" [ref=e363]:
+                - /placeholder: name@unternehmen.de
+            - generic [ref=e364]:
+              - generic [ref=e365]: Worauf sollen wir eingehen? (optional)
+              - textbox "Worauf sollen wir eingehen? (optional)" [ref=e366]:
+                - /placeholder: z. B. Steuermodellierung, Portfolio-Import …
+            - generic [ref=e367]:
+              - generic [ref=e368]:
+                - text: Mit der Buchung stimmen Sie der Verarbeitung gemäß
+                - link "Datenschutzerklärung" [ref=e369] [cursor=pointer]:
+                  - /url: "#"
+                - text: zu.
+              - button "Verbindlich buchen →" [disabled] [ref=e370]

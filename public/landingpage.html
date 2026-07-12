@@ -1,0 +1,1251 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>immology – VoFi-Investitionsrechnung für die Wohnungswirtschaft</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script>emailjs.init('kFAoFsSYn72fIp3Cl')</script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --c0:#0d0f22; --c1:#12142a; --c2:#1c1f3a;
+  --y:#f6c945; --yd:#d4a81a; --ys:rgba(246,201,69,.12);
+  --bl:#2f6bd6;
+  --w:#fff; --off:#faf9f6; --off2:#f3f3f6;
+  --t:#1a1d29; --t2:#6b7180; --t3:#9ba3af;
+  --bdr:#ececec; --bdr2:#d4d4dc;
+  --r:14px; --rs:8px; --rl:20px;
+  --sh:0 2px 12px rgba(13,15,34,.06),0 4px 24px rgba(13,15,34,.06);
+  --sh-lg:0 24px 64px rgba(13,15,34,.13);
+  --max:1160px;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;font-size:16px;color:var(--t);background:var(--w);line-height:1.65;-webkit-font-smoothing:antialiased}
+a{text-decoration:none;color:inherit}
+img{display:block;max-width:100%}
+.w{max-width:var(--max);margin:0 auto;padding:0 40px}
+.sec{padding:112px 0}
+.ey{font-size:.72rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--y)}
+
+/* ── Buttons ──────────────────────────── */
+.btn{display:inline-flex;align-items:center;gap:9px;font-family:inherit;font-weight:600;font-size:.9rem;cursor:pointer;border:none;border-radius:var(--rs);transition:all .15s ease;white-space:nowrap;line-height:1}
+.btn-y{background:var(--y);color:var(--c1);padding:14px 26px;font-weight:700}
+.btn-y:hover{background:var(--yd);transform:translateY(-1px);box-shadow:0 4px 18px rgba(246,201,69,.42)}
+.btn-ghost{background:transparent;color:rgba(255,255,255,.78);padding:13px 22px;border:1px solid rgba(255,255,255,.2);border-radius:var(--rs);transition:all .15s ease}
+.btn-ghost:hover{background:rgba(255,255,255,.08);color:#fff;border-color:rgba(255,255,255,.42);transform:translateY(-1px);box-shadow:0 4px 14px rgba(0,0,0,.25)}
+
+/* ── NAV ─────────────────────────────── */
+.nav{position:fixed;top:0;left:0;right:0;z-index:300;transition:background .24s,height .24s,box-shadow .24s;height:72px}
+.nav--solid{background:rgba(13,15,34,.88);backdrop-filter:blur(12px);box-shadow:0 1px 0 rgba(255,255,255,.06);height:60px}
+.nav__i{max-width:var(--max);margin:0 auto;padding:0 40px;height:100%;display:flex;align-items:center;justify-content:space-between;gap:32px}
+.logo{display:flex;align-items:center;gap:1px}
+.logo__c{background:var(--y);border-radius:50%;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;font-weight:400;font-size:.90rem;color:var(--c1);flex-shrink:0;transition:width .24s,height .24s,font-size .24s}
+.nav--solid .logo__c{width:32px;height:32px;font-size:.76rem}
+.logo__l{font-weight:400;font-size:.90rem;color:#fff;letter-spacing:-.01em}
+.nav__links{display:flex;align-items:center;gap:8px}
+.nav__links a{font-size:.84rem;font-weight:500;color:#fff;transition:color .14s,background .14s,transform .14s;position:relative;padding:5px 10px;border-radius:6px}
+.nav__links a:hover{color:#fff;background:rgba(255,255,255,.1);transform:translateY(-1px)}
+.nav__links a.active{color:var(--y)}
+.nav__links a.active::after{content:'';position:absolute;bottom:0;left:10px;right:10px;height:2px;background:var(--y);border-radius:1px}
+.nav__cta{font-size:.84rem;font-weight:600;color:var(--y);opacity:0;pointer-events:none;transition:opacity .24s,transform .14s;white-space:nowrap}
+.nav--solid .nav__cta{opacity:1;pointer-events:auto}
+.nav__cta:hover{color:var(--yd);transform:translateY(-1px)}
+.nav--over .nav__links a{color:#fff}
+
+/* ── HERO ────────────────────────────── */
+.hero{position:sticky;top:0;z-index:0;height:100vh;min-height:600px;overflow:hidden;display:flex;align-items:center}
+.hero__vid{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:blur(0px)}
+.hero__ov{position:absolute;inset:0;background:rgba(13,15,34,.35);z-index:1}
+.hero__grad{position:absolute;inset:0;background:linear-gradient(100deg,rgba(13,15,34,.75) 0%,rgba(13,15,34,.52) 45%,rgba(13,15,34,.18) 100%);z-index:2}
+.hero__i{max-width:var(--max);margin:0 auto;padding:0 40px;position:relative;z-index:3;width:100%;display:flex;justify-content:center}
+.hero__content{max-width:640px;width:100%;display:flex;flex-direction:column;align-items:flex-start;gap:24px}
+.hero__tag{display:inline-flex;align-items:center;gap:7px;background:rgba(246,201,69,.1);border:1px solid rgba(246,201,69,.22);border-radius:20px;padding:5px 14px;font-size:.72rem;font-weight:700;color:var(--y);letter-spacing:.06em;text-transform:uppercase}
+.hero__tag::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--y);animation:blink 2.4s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.35}}
+.hero h1{color:#fff;font-size:clamp(2.4rem,4.5vw,3.75rem);font-weight:800;letter-spacing:-.025em;line-height:1.08;margin:0}
+.hero h1 em{font-style:normal;color:var(--y)}
+.hero__sub{color:#fff;font-size:17px;line-height:1.6;text-wrap:balance;margin:0;max-width:640px}
+.hero__ctas{display:flex;gap:16px;align-items:center}
+.hero__trust{display:flex;gap:24px;align-items:center;flex-wrap:wrap}
+.trust-badge{display:inline-flex;align-items:center;gap:6px;font-size:.78rem;color:#ffffff;margin-right:16px}
+.trust-badge svg{opacity:.85}
+.hero__scroll{position:absolute;bottom:32px;left:50%;transform:translateX(-50%);z-index:3;display:flex;flex-direction:column;align-items:center;gap:6px;font-size:.72rem;color:rgba(255,255,255,.35);letter-spacing:.06em;text-transform:uppercase;animation:bob 2s ease-in-out infinite}
+@keyframes bob{0%,100%{transform:translateX(-50%) translateY(0)}50%{transform:translateX(-50%) translateY(6px)}}
+@keyframes kb{0%{transform:scale(1)}100%{transform:scale(1.06)}}
+
+/* ── CONTENT WRAPPER (slides over sticky hero) ── */
+.content-wrap{position:relative;z-index:1;background:var(--w)}
+
+/* ── STATS ──────────────────────────── */
+.stats{background:var(--w);padding:0;margin-top:-64px;position:relative;z-index:2}
+.stats__card{max-width:var(--max);margin:0 auto;padding:0 40px}
+.stats__inner{background:var(--w);border-radius:var(--rl);box-shadow:0 24px 64px rgba(13,15,34,.1);display:grid;grid-template-columns:repeat(3,1fr);padding:0}
+.stat{padding:44px 36px;text-align:center;position:relative}
+.stat+.stat::before{content:'';position:absolute;left:0;top:24px;bottom:24px;width:1px;background:var(--bdr)}
+.stat__n{font-size:clamp(2.4rem,4vw,3rem);font-weight:800;color:var(--c1);letter-spacing:-.04em;line-height:1;margin-bottom:8px}
+.stat__n b{color:var(--y)}
+.stat__label{font-size:.88rem;font-weight:600;color:var(--t);margin-bottom:4px}
+.stat__sub{font-size:.78rem;color:var(--t2);line-height:1.45}
+
+/* ── PRODUCT PROOF ──────────────────── */
+.proof{background:var(--w);padding:96px 0 80px}
+.proof__head{text-align:center;margin-bottom:60px}
+.proof__head h2{font-size:clamp(1.6rem,3vw,2.25rem);font-weight:700;letter-spacing:-.02em;margin-top:10px}
+.proof__head p{color:var(--t2);margin-top:12px;max-width:520px;margin-left:auto;margin-right:auto}
+.proof__screens{display:grid;grid-template-columns:1fr 1fr;gap:20px}
+.screen-card{border-radius:var(--rl);overflow:hidden;box-shadow:var(--sh-lg);border:1px solid var(--bdr);position:relative;background:var(--off2)}
+.screen-card__label{position:absolute;top:12px;left:12px;background:rgba(18,20,42,.78);backdrop-filter:blur(6px);color:#fff;font-size:.68rem;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.04em;z-index:2}
+/* Dashboard mockup */
+.mock{font-family:'Inter',sans-serif;font-size:12px;display:flex;min-height:380px}
+.mock__sb{width:180px;background:#12142a;flex-shrink:0;padding:14px 0;display:flex;flex-direction:column}
+.mock__logo{display:flex;align-items:center;gap:5px;padding:0 14px 16px;border-bottom:1px solid rgba(255,255,255,.08)}
+.mock__logo-c{background:#f6c945;border-radius:50%;width:22px;height:22px;display:flex;align-items:center;justify-content:center;font-size:.5rem;color:#12142a;flex-shrink:0}
+.mock__logo-t{color:rgba(255,255,255,.55);font-size:.7rem}
+.mock__logo-t b{color:#fff;font-weight:700}
+.mock__nav-item{display:flex;align-items:center;gap:8px;padding:7px 14px;font-size:.68rem;color:rgba(255,255,255,.55);cursor:default}
+.mock__nav-item--active{background:rgba(255,255,255,.07);color:#fff}
+.mock__nav-item--active::before{content:'';width:2px;height:14px;background:#f6c945;border-radius:1px;position:absolute;left:0}
+.mock__nav-item{position:relative}
+.mock__body{flex:1;background:#f8f8fa;overflow:hidden;display:flex;flex-direction:column}
+.mock__topbar{background:#fff;height:36px;display:flex;align-items:center;justify-content:space-between;padding:0 16px;border-bottom:1px solid #eee;flex-shrink:0}
+.mock__title{font-size:.75rem;font-weight:700;color:#1a1d29}
+.mock__avatar{width:20px;height:20px;border-radius:50%;background:#5b8def;font-size:.5rem;color:#fff;display:flex;align-items:center;justify-content:center;font-weight:700}
+.mock__content{flex:1;padding:14px;overflow:hidden;display:grid;grid-template-columns:1fr 220px;gap:10px}
+.mock__main{}
+.mock__table-head{display:grid;grid-template-columns:1fr 70px 70px 80px;gap:4px;font-size:.58rem;font-weight:600;color:#9ba3af;text-transform:uppercase;letter-spacing:.05em;padding:0 6px;margin-bottom:6px}
+.mock__row{display:grid;grid-template-columns:1fr 70px 70px 80px;gap:4px;align-items:center;padding:5px 6px;border-radius:5px;font-size:.62rem}
+.mock__row:hover{background:#f3f3f6}
+.mock__row:nth-child(odd){background:rgba(0,0,0,.015)}
+.mock__pos{color:#1a1d29;font-weight:500}
+.mock__val{color:#6b7180;text-align:right}
+.mock__badge{display:inline-flex;align-items:center;justify-content:flex-end;gap:2px;font-size:.58rem;font-weight:700;padding:2px 6px;border-radius:6px}
+.bg{background:#e6f5ec;color:#2f9e5f}
+.br{background:#fdeae6;color:#d1583f}
+.mock__sep{border:none;border-top:1px solid #e4e4ec;margin:6px 0}
+.mock__total{display:grid;grid-template-columns:1fr 70px 70px 80px;gap:4px;font-size:.65rem;font-weight:700;padding:5px 6px;color:#1a1d29}
+.mock__side{display:flex;flex-direction:column;gap:8px}
+.mock__widget{background:#fff;border-radius:8px;border:1px solid #eee;padding:10px}
+.mock__widget-t{font-size:.62rem;font-weight:700;color:#1a1d29;margin-bottom:8px}
+.mock__kacheln{display:grid;grid-template-columns:1fr 1fr;gap:5px}
+.mock__kachel{background:#f8f8fa;border:1px solid #eee;border-radius:5px;padding:7px;font-size:.58rem}
+.mock__kachel-t{font-weight:600;color:#1a1d29;margin-top:4px}
+.mock__kachel-s{color:#9ba3af;font-size:.54rem}
+.mock__ki{width:18px;height:18px;border-radius:4px;display:flex;align-items:center;justify-content:center}
+/* Szenarien mockup */
+.mock2{font-family:'Inter',sans-serif;font-size:12px;display:flex;min-height:380px}
+.mock2__sb{width:180px;background:#12142a;flex-shrink:0;padding:14px 0}
+.mock2__body{flex:1;background:#fff;overflow:hidden;display:flex;flex-direction:column}
+.mock2__topbar{background:#fff;height:36px;display:flex;align-items:center;gap:8px;padding:0 16px;border-bottom:1px solid #eee;flex-shrink:0}
+.mock2__title{font-size:.75rem;font-weight:700;color:#1a1d29}
+.mock2__badge{background:#f1f1f4;border-radius:4px;padding:2px 8px;font-size:.58rem;color:#6b7180}
+.mock2__content{flex:1;padding:12px 14px;overflow:hidden;display:grid;grid-template-columns:1fr 200px;gap:10px}
+.mock2__table{overflow:hidden}
+.mock2__th{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:4px;font-size:.58rem;font-weight:700;color:#6b7180;padding:0 4px;margin-bottom:4px;border-bottom:1px solid #eee;padding-bottom:5px}
+.mock2__tr{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:4px;padding:4px 4px;font-size:.62rem;border-bottom:1px solid #f4f4f6}
+.mock2__tr:hover{background:#f8f8fa}
+.mock2__label{color:#1a1d29;font-weight:500}
+.mock2__val{color:#6b7180;text-align:right}
+.mock2__rail{background:#f8f8fa;border-left:1px solid #eee;padding:10px 10px;font-size:.6rem}
+.mock2__rail-t{font-weight:700;color:#1a1d29;margin-bottom:8px;font-size:.65rem}
+.rail-sec{margin-bottom:6px}
+.rail-sec-t{font-size:.58rem;font-weight:600;color:#6b7180;margin-bottom:3px;display:flex;align-items:center;gap:3px}
+.rail-step{display:flex;align-items:center;gap:5px;padding:3px 4px;border-radius:3px;font-size:.58rem;color:#1a1d29}
+.rail-num{width:14px;height:14px;border-radius:50%;background:#12142a;color:#fff;font-size:.5rem;display:flex;align-items:center;justify-content:center;font-weight:700;flex-shrink:0}
+.dot-b{width:7px;height:7px;border-radius:50%;background:#3b82f6;flex-shrink:0}
+.dot-g{width:7px;height:7px;border-radius:50%;background:#2fae7e;flex-shrink:0}
+.dot-p{width:7px;height:7px;border-radius:50%;background:#9a6ee8;flex-shrink:0}
+.tag-pill{display:inline-flex;align-items:center;gap:3px;background:rgba(246,201,69,.12);border:1px solid rgba(246,201,69,.3);border-radius:10px;padding:1px 6px;font-size:.54rem;font-weight:600;color:#d4a81a}
+
+/* ── PROBLEM/SOLUTION ───────────────── */
+.psol{background:var(--off2)}
+.psol__head{text-align:center;margin-bottom:56px}
+.psol__head h2{margin-top:10px;font-size:clamp(1.6rem,3vw,2.25rem);font-weight:700;letter-spacing:-.02em}
+.psol__head p{color:var(--t2);margin-top:12px;max-width:520px;margin-left:auto;margin-right:auto}
+.psol__g{display:grid;grid-template-columns:1fr 52px 1fr;align-items:stretch}
+.pc{border-radius:var(--rl);padding:44px 40px}
+.pc--b{background:var(--w);border:1px solid var(--bdr)}
+.pc--a{background:var(--c1);color:#fff}
+.pc__tag{display:inline-block;font-size:.68rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:4px 10px;border-radius:6px;margin-bottom:14px}
+.pc--b .pc__tag{background:rgba(107,113,128,.1);color:var(--t2)}
+.pc--a .pc__tag{background:rgba(246,201,69,.12);color:var(--y)}
+.pc--a h3{color:#fff}
+.pc__l{margin-top:18px;display:flex;flex-direction:column;gap:12px}
+.pi{display:flex;gap:11px;font-size:.88rem;line-height:1.55}
+.pc--b .pi{color:var(--t2)}
+.pc--a .pi{color:rgba(255,255,255,.68)}
+.pi__ic{width:18px;height:18px;border-radius:50%;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center}
+.pc--b .pi__ic{background:#fee2e2}
+.pc--a .pi__ic{background:rgba(246,201,69,.14)}
+.mid{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px}
+.mid::before,.mid::after{content:'';flex:1;width:1px;background:var(--bdr)}
+.mid__a{width:34px;height:34px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center}
+
+/* ── VIDEO SECTION ──────────────────── */
+.vsec{background:var(--c1);padding:96px 0}
+.vsec__head{text-align:center;margin-bottom:52px}
+.vsec__head h2{color:#fff;margin-top:10px;font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:700}
+.vsec__head p{color:rgba(255,255,255,.5);margin-top:12px;max-width:560px;margin-left:auto;margin-right:auto;font-size:.95rem;line-height:1.7}
+.vplayer{max-width:860px;margin:0 auto;border-radius:var(--rl);overflow:hidden;box-shadow:0 24px 72px rgba(0,0,0,.55);position:relative;background:#000;aspect-ratio:16/9}
+.vplayer video{width:100%;height:100%;display:block}
+.vplayer__btn{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;cursor:pointer;background:rgba(0,0,0,.3);transition:background .2s;z-index:3}
+.vplayer__btn:hover{background:rgba(0,0,0,.14)}
+.vplayer__icon{width:68px;height:68px;border-radius:50%;background:var(--y);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 28px rgba(0,0,0,.4);transition:transform .18s}
+.vplayer__btn:hover .vplayer__icon{transform:scale(1.07)}
+.vthumb{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:center bottom;pointer-events:none}
+.vsec__note{text-align:center;margin-top:20px;font-size:.76rem;color:rgba(255,255,255,.25)}
+
+/* ── FEATURES ───────────────────────── */
+.features{background:var(--w)}
+.features__head{text-align:center;margin-bottom:56px}
+.features__head h2{margin-top:10px;font-size:clamp(1.6rem,3vw,2.25rem);font-weight:700;letter-spacing:-.02em}
+.features__head p{color:var(--t2);margin-top:12px;max-width:480px;margin-left:auto;margin-right:auto}
+.feat-g{display:grid;grid-template-columns:repeat(2,1fr);gap:2px;border-radius:var(--rl);overflow:hidden}
+.fc{background:var(--off2);padding:40px 36px;display:flex;gap:22px;align-items:flex-start;transition:background .14s}
+.fc:hover{background:var(--off)}
+.fc:hover .fc__ic{background:var(--c1);border-color:var(--c1)}
+.fc:hover .fc__ic svg{stroke:#fff}
+.fc__ic{width:48px;height:48px;border-radius:11px;background:var(--w);border:1px solid var(--bdr);display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:all .14s}
+.fc__ic svg{width:22px;height:22px;stroke:var(--c1);fill:none;stroke-width:1.75;stroke-linecap:round;stroke-linejoin:round;transition:stroke .14s}
+.fc h3{margin-bottom:7px;font-size:.95rem}
+.fc p{font-size:.86rem;color:var(--t2);line-height:1.6}
+
+/* ── SOCIAL PROOF ───────────────────── */
+.social{background:var(--off2)}
+.social__head{text-align:center;margin-bottom:52px}
+.social__head h2{margin-top:10px;font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:700}
+.quotes-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px;align-items:stretch}
+.quote-wrap{background:var(--w);border-radius:var(--rl);padding:44px 40px;box-shadow:var(--sh);position:relative;display:flex;flex-direction:column}
+.quote-wrap::before{content:'\201C';position:absolute;top:20px;left:36px;font-size:5rem;font-weight:800;color:var(--y);line-height:1;opacity:.4}
+blockquote{font-size:.96rem;font-weight:500;line-height:1.7;padding-top:24px;color:var(--t);flex:1}
+.qa{display:flex;align-items:center;gap:14px;margin-top:22px;padding-top:22px;border-top:1px solid var(--bdr)}
+.qa__av{width:42px;height:42px;border-radius:50%;background:var(--c1);color:var(--y);font-weight:700;font-size:.82rem;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.qa__n{font-weight:600;font-size:.88rem;color:var(--c1)}
+.qa__r{font-size:.8rem;color:var(--t2);margin-top:1px}
+
+/* ── CTA BAND ───────────────────────── */
+.cband{background:var(--c0);padding:112px 0;text-align:center;position:relative;overflow:hidden}
+.cband::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 55% 70% at 50% 50%,rgba(47,107,214,.16),transparent 65%);pointer-events:none}
+.cband__i{position:relative;z-index:1}
+.cband h2{color:#fff;font-size:clamp(1.6rem,3vw,2.25rem);font-weight:700;letter-spacing:-.02em;max-width:560px;margin:0 auto 14px}
+.cband p{color:rgba(255,255,255,.48);font-size:1rem;max-width:440px;margin:0 auto 40px}
+.cband__fn{margin-top:18px;font-size:.74rem;color:rgba(255,255,255,.22)}
+
+/* ── FOOTER ─────────────────────────── */
+.foot{background:#09091a;padding:36px 0;border-top:1px solid rgba(255,255,255,.05)}
+.foot__i{max-width:var(--max);margin:0 auto;padding:0 40px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:16px}
+.foot__brand{display:flex;align-items:center;gap:1px}
+.foot__brand-c{background:var(--y);border-radius:50%;width:28px;height:28px;display:flex;align-items:center;justify-content:center;font-size:.9rem;color:var(--c1);flex-shrink:0}
+.foot__brand-l{font-size:.9rem;color:rgba(255,255,255,.42)}
+.foot__brand-l b{color:rgba(255,255,255,.9);font-weight:700}
+.foot__c{font-size:.78rem;color:rgba(255,255,255,.22)}
+.foot__links{display:flex;gap:22px}
+.foot__links a{font-size:.78rem;color:rgba(255,255,255,.28);transition:color .12s}
+.foot__links a:hover{color:rgba(255,255,255,.65)}
+
+/* ── Demo-Modal ─────────────────────── */
+.dm-overlay{position:fixed;inset:0;background:rgba(8,10,24,.62);backdrop-filter:blur(3px);z-index:500;display:flex;align-items:center;justify-content:center;padding:24px;opacity:0;pointer-events:none;transition:opacity .2s}
+.dm-overlay.dm-open{opacity:1;pointer-events:auto}
+.dm-modal{width:min(980px,100%);background:#fff;border-radius:20px;box-shadow:0 40px 120px rgba(0,0,0,.55);overflow:hidden;display:grid;grid-template-columns:340px 1fr;max-height:calc(100vh - 48px);transform:translateY(16px) scale(.98);transition:transform .2s}
+.dm-overlay.dm-open .dm-modal{transform:none}
+.dm-left{background:#12142a;color:#fff;padding:36px 32px;display:flex;flex-direction:column;gap:0;overflow-y:auto}
+.dm-right{padding:32px 36px 36px;position:relative;overflow-y:auto;display:flex;flex-direction:column}
+/* left col */
+.dm-logo{display:flex;align-items:center;gap:1px;margin-bottom:30px}
+.dm-logo-dot{background:#f6c945;border-radius:50%;width:38px;height:38px;display:inline-flex;align-items:center;justify-content:center;font-weight:400;font-size:.90rem;color:#12142a;flex-shrink:0}
+.dm-eyebrow{font-size:13px;font-weight:600;color:#f6c945;letter-spacing:.08em;text-transform:uppercase;margin-bottom:12px}
+.dm-headline{font-size:26px;font-weight:800;letter-spacing:-.02em;line-height:1.2;margin:0 0 14px;text-wrap:balance}
+.dm-sub{font-size:14.5px;line-height:1.65;color:#a6abc4;margin:0 0 28px;text-wrap:pretty}
+.dm-checks{display:flex;flex-direction:column;gap:14px;font-size:14px;color:#e6e8f2}
+.dm-check{display:flex;align-items:center;gap:12px}
+.dm-check-ic{width:22px;height:22px;flex:none;border-radius:50%;background:rgba(246,201,69,.15);color:#f6c945;display:flex;align-items:center;justify-content:center;font-size:12px}
+.dm-contact{margin-top:auto;padding-top:28px;border-top:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:12px}
+.dm-avatar{width:42px;height:42px;flex:none;border-radius:50%;background:repeating-linear-gradient(45deg,#2a2d4a 0 6px,#232645 6px 12px);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;color:#f6c945}
+/* tabs + close */
+.dm-topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-shrink:0}
+.dm-tabs{display:flex;background:#f2f3f7;border-radius:12px;padding:4px;gap:2px}
+.dm-tab{border:0;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;padding:9px 20px;border-radius:9px;transition:background .15s,color .15s,box-shadow .15s}
+.dm-tab.dm-active{background:#fff;color:#12142a;box-shadow:0 2px 8px rgba(18,20,42,.10)}
+.dm-tab:not(.dm-active){background:transparent;color:#6b7180}
+.dm-close{border:0;background:#f2f3f7;color:#6b7180;width:34px;height:34px;border-radius:50%;cursor:pointer;font-size:18px;line-height:1;flex-shrink:0;display:flex;align-items:center;justify-content:center;transition:background .12s,color .12s}
+.dm-close:hover{background:#e6e8ef;color:#12142a}
+/* step bar */
+.dm-steps{display:flex;align-items:center;gap:8px;margin-bottom:22px;font-size:12.5px;font-weight:600;flex-shrink:0}
+.dm-step{display:flex;align-items:center;gap:7px}
+.dm-step-num{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0}
+.dm-step-line{width:26px;height:1.5px;background:#e2e4ec;flex-shrink:0}
+/* day + slot grid */
+.dm-days{display:flex;gap:10px;margin-bottom:24px;flex-wrap:wrap}
+.dm-day{border:1.5px solid #d8dae3;background:#fff;cursor:pointer;font-family:inherit;border-radius:12px;padding:10px 16px;text-align:center;min-width:74px;transition:background .12s,border-color .12s}
+.dm-day.dm-sel{background:#12142a;border-color:#12142a}
+.dm-day-wd{font-size:12px;font-weight:600;color:#6b7180;text-transform:uppercase;letter-spacing:.04em}
+.dm-day.dm-sel .dm-day-wd{color:#f6c945}
+.dm-day-dt{font-size:16px;font-weight:800;color:#12142a;font-variant-numeric:tabular-nums}
+.dm-day.dm-sel .dm-day-dt{color:#fff}
+.dm-slots{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:26px}
+.dm-slot{border:1.5px solid #d8dae3;background:#fff;color:#12142a;cursor:pointer;font-family:inherit;font-size:14.5px;font-weight:600;padding:12px 0;border-radius:10px;font-variant-numeric:tabular-nums;transition:background .12s,border-color .12s}
+.dm-slot.dm-taken{background:#f6f7fa;border-color:#eceef4;color:#b9bdc9;cursor:default;text-decoration:line-through}
+.dm-slot.dm-sel{background:#f6c945;border-color:#f6c945}
+.dm-slot:not(.dm-taken):not(.dm-sel):hover{border-color:#12142a}
+/* footer bar */
+.dm-foot{display:flex;align-items:center;justify-content:space-between;gap:16px;border-top:1px solid #ececec;padding-top:20px;margin-top:auto;flex-shrink:0}
+.dm-foot-hint{font-size:13.5px;color:#6b7180;line-height:1.5}
+/* CTA button states */
+.dm-cta{border:0;font-family:inherit;font-size:15.5px;font-weight:700;padding:14px 28px;border-radius:12px;white-space:nowrap;cursor:pointer;transition:background .15s,box-shadow .15s,color .15s}
+.dm-cta:disabled,.dm-cta[disabled]{background:#eceef4;color:#9aa0af;box-shadow:none;cursor:default}
+.dm-cta.dm-cta-primary{background:#f6c945;color:#12142a;box-shadow:0 8px 30px rgba(246,201,69,.25)}
+.dm-cta.dm-cta-primary:hover:not(:disabled){background:#ffd75e}
+/* appointment summary card */
+.dm-appt{display:flex;align-items:center;justify-content:space-between;background:#faf9f6;border:1px solid #ececec;border-radius:12px;padding:14px 18px;margin-bottom:22px;flex-shrink:0}
+.dm-appt-icon{width:34px;height:34px;flex:none;border-radius:10px;background:#12142a;color:#f6c945;display:flex;align-items:center;justify-content:center;font-size:15px}
+.dm-appt-change{border:0;background:none;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:#2f6bd6;flex-shrink:0}
+.dm-appt-change:hover{color:#1f56bb}
+/* form */
+.dm-grid2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.dm-label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#12142a;margin-bottom:14px}
+.dm-label:last-child{margin-bottom:0}
+.dm-input,.dm-textarea{border:1.5px solid #d8dae3;border-radius:10px;padding:12px 14px;font-family:inherit;font-size:14.5px;color:#12142a;outline:none;transition:border-color .12s;width:100%}
+.dm-input:focus,.dm-textarea:focus{border-color:#f6c945}
+.dm-textarea{resize:vertical}
+.dm-privacy{font-size:12.5px;color:#9aa0af;line-height:1.5;max-width:300px}
+.dm-privacy a{color:#9aa0af;text-decoration:underline}
+#dmBody{min-height:460px;display:flex;flex-direction:column}
+#dmBody>div:not(.dm-steps){flex:1;display:flex;flex-direction:column}
+/* confirmation */
+.dm-done{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 24px;flex:1}
+.dm-done-ic{width:64px;height:64px;border-radius:50%;background:#eaf6ee;color:#2f9e5f;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:20px}
+.dm-done-h{font-size:22px;font-weight:800;color:#12142a;letter-spacing:-.02em;margin-bottom:10px}
+.dm-done-sub{font-size:15px;color:#4a4f60;line-height:1.6;max-width:400px;text-wrap:pretty}
+.dm-done-list{display:flex;flex-direction:column;gap:10px;background:#faf9f6;border:1px solid #ececec;border-radius:12px;padding:18px 22px;margin-top:22px;font-size:13.5px;color:#4a4f60;text-align:left;min-width:300px}
+.dm-done-list-item{display:flex;align-items:center;gap:10px}
+.dm-done-check{color:#2f9e5f}
+.dm-done-btns{display:flex;gap:12px;margin-top:24px;flex-wrap:wrap;justify-content:center}
+.dm-btn-dark{border:0;background:#12142a;color:#fff;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;padding:12px 22px;border-radius:10px;transition:background .12s}
+.dm-btn-dark:hover{background:#1e2140}
+.dm-btn-sec{border:1.5px solid #d8dae3;background:#fff;color:#12142a;cursor:pointer;font-family:inherit;font-size:14px;font-weight:600;padding:11px 22px;border-radius:10px;transition:background .12s}
+.dm-btn-sec:hover{background:#f6f7fa}
+/* responsive */
+@media(max-width:768px){
+  .dm-modal{grid-template-columns:1fr;max-height:none;height:calc(100dvh - 48px)}
+  .dm-left{padding:24px 20px 20px}
+  .dm-right{padding:20px}
+  .dm-headline{font-size:20px}
+  .dm-checks,.dm-contact{display:none}
+  .dm-slots{grid-template-columns:repeat(3,1fr)}
+  .dm-grid2{grid-template-columns:1fr}
+  .dm-cta{font-size:14px;padding:13px 20px}
+}
+@media(max-width:480px){
+  .dm-days{gap:8px}
+  .dm-day{min-width:60px;padding:8px 10px}
+  .dm-slots{grid-template-columns:repeat(2,1fr)}
+  .dm-tab{font-size:13px;padding:8px 14px}
+}
+
+/* ── Mobile Sticky CTA ──────────────── */
+.mcta{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1px solid var(--bdr);padding:12px 20px 16px;z-index:200;box-shadow:0 -4px 20px rgba(13,15,34,.08)}
+.mcta .btn-y{width:100%;justify-content:center;font-size:.95rem;padding:15px}
+
+/* ── Animations ─────────────────────── */
+@media(prefers-reduced-motion:no-preference){
+  .fade-up{opacity:0;transform:translateY(28px);transition:opacity .6s cubic-bezier(.22,.61,.36,1),transform .6s cubic-bezier(.22,.61,.36,1)}
+  .fade-up.in-view{opacity:1;transform:translateY(0)}
+  .stagger-1{transition-delay:.08s}
+  .stagger-2{transition-delay:.16s}
+  .stagger-3{transition-delay:.24s}
+  .stagger-4{transition-delay:.32s}
+  @keyframes kb{0%{transform:scale(1) translate(0,0)}100%{transform:scale(1.06) translate(-1%,-1%)}}
+  .hero__vid{animation:kb 30s ease-in-out infinite alternate}
+}
+
+/* ── Responsive ─────────────────────── */
+@media(max-width:1024px){
+  .proof__screens{grid-template-columns:1fr}
+  .psol__g{grid-template-columns:1fr;gap:14px}
+  .mid{flex-direction:row;height:auto}
+  .mid::before,.mid::after{flex:1;height:1px;width:auto}
+  .feat-g{grid-template-columns:1fr}
+  .stats__inner{grid-template-columns:1fr}
+  .stat+.stat::before{display:none;border-top:1px solid var(--bdr);top:0;left:24px;right:24px;width:auto;height:1px}
+  .stat+.stat{border-top:1px solid var(--bdr)}
+  .quotes-grid{grid-template-columns:1fr}
+}
+@media(max-width:768px){
+  .w,.nav__i,.foot__i{padding-left:20px;padding-right:20px}
+  .sec{padding:72px 0}
+  .stats{margin-top:-36px}
+  .stats__card{padding:0 20px}
+  .nav__links{display:none}
+  .hero__i{padding:0 20px}
+  .quote-wrap{padding:32px 26px}  .fc{padding:28px 24px}
+  .pc{padding:32px 24px}
+  .mcta{display:block}
+  body{padding-bottom:76px}
+  .foot__i{flex-direction:column;align-items:flex-start;gap:18px}
+}
+@media(max-width:640px){
+  .hero h1{font-size:2.2rem}
+  .hero__vid{animation:none}
+  .hero{position:relative;height:auto;padding:100px 0 80px}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="nav nav--over" id="nav">
+  <div class="nav__i">
+    <a href="#" class="logo">
+      <span class="logo__c">immo</span><span class="logo__l">logy</span>
+    </a>
+    <div class="nav__links">
+      <a href="#produkt" data-section="produkt">Software</a>
+      <a href="#problem" data-section="problem">Warum immology</a>
+      <a href="#video" data-section="video">Video ansehen</a>
+      <a href="#features" data-section="features">Features</a>
+      <a href="#referenzen" data-section="referenzen">Referenzen</a>
+    </div>
+    <a href="#demo" class="nav__cta">Demo buchen →</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="hero">
+  <video class="hero__vid" src="hero-bg.mp4" autoplay muted loop playsinline preload="auto" id="heroBg"></video>
+  <div class="hero__ov"></div>
+  <div class="hero__grad"></div>
+  <div class="hero__i">
+    <div class="hero__content">
+      <div class="hero__tag">VoFi-Software für die Wohnungswirtschaft</div>
+      <h1>Investitionsentscheidungen,<br>die <em>standhalten.</em></h1>
+      <p class="hero__sub">Der Vollständige Finanzplan, digitalisiert —<br>validierte Eingaben, automatische Steuermodellierung, belastbare Renditekennzahlen in Minuten.</p>
+      <div class="hero__ctas">
+        <a class="btn btn-y" href="#demo" style="padding:14px 28px;font-size:.95rem">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Demo buchen
+        </a>
+        <a class="btn btn-ghost" href="#video">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+          Video ansehen
+        </a>
+      </div>
+      <div class="hero__trust">
+        <span class="trust-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          DSGVO-konform
+        </span>
+        <span class="trust-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg>
+          In Stunden einsatzbereit
+        </span>
+        <span class="trust-badge">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+          Hosting in Deutschland
+        </span>
+      </div>
+    </div>
+  </div>
+  <div class="hero__scroll">
+    <span>Mehr erfahren</span>
+    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,.4)" stroke-width="2" stroke-linecap="round"><path d="M6 9l6 6 6-6"/></svg>
+  </div>
+</section>
+
+<!-- CONTENT WRAPPER -->
+<div class="content-wrap">
+
+<!-- STATS -->
+<section class="stats">
+  <div class="stats__card">
+    <div class="stats__inner">
+      <div class="stat fade-up">
+        <div class="stat__n"><span class="count" data-target="3">0</span><b>h</b></div>
+        <div class="stat__label">statt 2 Tagen</div>
+        <div class="stat__sub">für eine vollständige VoFi-Analyse</div>
+      </div>
+      <div class="stat fade-up stagger-1">
+        <div class="stat__n"><span class="count" data-target="100">0</span><b>%</b></div>
+        <div class="stat__label">validierte Eingaben</div>
+        <div class="stat__sub">jede Annahme automatisch geprüft</div>
+      </div>
+      <div class="stat fade-up stagger-2">
+        <div class="stat__n"><span class="count" data-target="12">0</span></div>
+        <div class="stat__label">Kennzahlen sofort</div>
+        <div class="stat__sub">EK-Rendite, Cashflow, Endwert u. a.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRODUCT PROOF -->
+<section class="proof sec" id="produkt">
+  <div class="w">
+    <div class="proof__head fade-up">
+      <span class="ey">Die Software</span>
+      <h2>Sehen Sie, womit Ihre Analysten<br>täglich arbeiten</h2>
+      <p>Nicht ein Mockup — reale Ansichten aus dem Produktivsystem.</p>
+    </div>
+    <img src="screenshot-vofi.png" alt="immology – Produktansicht" class="fade-up" style="width:100%;height:auto;display:block">
+  </div>
+</section>
+
+<!-- PROBLEM → LÖSUNG -->
+<section class="sec sec psol" id="problem" style="background:var(--off2)">
+  <div class="w">
+    <div class="psol__head fade-up">
+      <span class="ey">Warum immology</span>
+      <h2>Excel-Fehler kosten mehr<br>als die Software-Lizenz</h2>
+      <p>Ein falscher AfA-Satz, eine veraltete Zinsstruktur — und die ausgewiesene Eigenkapitalrendite weicht um Prozentpunkte ab.</p>
+    </div>
+    <div class="psol__g">
+      <div class="pc pc--b fade-up">
+        <span class="pc__tag">Bisher</span>
+        <h3>Manuelle Excel-Modelle</h3>
+        <div class="pc__l">
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span><span>Fehleranfällige Formeln — ein falscher Satz verzerrt den gesamten Finanzplan</span></div>
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span><span>Keine einheitliche Datenbasis — Versionschaos, Reviews dauern Stunden</span></div>
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span><span>Steuerliche Effekte (AfA, Zinsen) manuell geschätzt oder vergessen</span></div>
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span><span>Szenarienvergleiche nur durch manuelle Kopien — Inkonsistenz vorprogrammiert</span></div>
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="3" stroke-linecap="round"><path d="M18 6L6 18M6 6l12 12"/></svg></span><span>Kein Audit-Trail — Annahmen nicht nachvollziehbar, keine Revisionssicherheit</span></div>
+        </div>
+      </div>
+      <div class="mid fade-up stagger-1">
+        <span class="mid__a"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#12142a" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg></span>
+      </div>
+      <div class="pc pc--a fade-up stagger-2">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+          <span class="pc__tag" style="margin-bottom:0">Mit immology</span>
+          <div style="display:flex;align-items:center;gap:1px">
+            <span style="background:#f6c945;border-radius:50%;width:36px;height:36px;display:inline-flex;align-items:center;justify-content:center;font-weight:400;font-size:.82rem;color:#12142a;flex-shrink:0">immo</span><span style="font-size:.88rem;font-weight:400;color:#fff;letter-spacing:-.01em">logy</span>
+          </div>
+        </div>
+        <h3>Automatisierte VoFi-Engine</h3>
+        <div class="pc__l">
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f6c945" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span>Eingabe-Validierung in Echtzeit — Fehler werden gemeldet, bevor sie zählen</span></div>
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f6c945" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span>Alle Parameter strukturiert — eine Quelle der Wahrheit für das gesamte Team</span></div>
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f6c945" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span>AfA, Zinsstrukturen und Tilgungspläne automatisch modelliert und aktualisiert</span></div>
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f6c945" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span>Szenariovergleich (Basis / Optimistisch / Pessimistisch) per Klick</span></div>
+          <div class="pi"><span class="pi__ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f6c945" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span><span>Vollständiger Audit-Trail — revisionssicher, jede Änderung dokumentiert</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- VIDEO -->
+<section class="vsec" id="video">
+  <div class="w">
+    <div class="vsec__head fade-up">
+      <span class="ey">Herausforderung &amp; Lösung</span>
+      <h2>Präzise Investitionsrechnung<br>für die Wohnungswirtschaft</h2>
+      <p>Gestiegene Kosten und ESG-Kriterien erfordern absolut fehlerfreie Berechnungen. Dieses Video skizziert die Hürden des Vollständigen Finanzplans und erklärt, wie immology Zahlungsströme und Steuerprofile zuverlässig digital verknüpft.</p>
+    </div>
+    <div class="vplayer fade-up" id="vplayer">
+      <video src="vofi-immology.mp4" id="mainVid" preload="metadata" style="display:none;width:100%;height:100%;position:absolute;inset:0"></video>
+      <video src="vofi-immology.mp4" id="vthumbVid" class="vthumb" muted preload="metadata" onloadedmetadata="this.currentTime=38"></video>
+      <div class="vplayer__btn" id="vplayerBtn" onclick="playMain()">
+        <div class="vplayer__icon">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="#12142a" style="margin-left:4px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+      </div>
+    </div>
+    <p class="vsec__note">Klicken zum Abspielen · Ton empfohlen</p>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section class="features sec" id="features">
+  <div class="w">
+    <div class="features__head fade-up">
+      <span class="ey">Was immology leistet</span>
+      <h2>Vier Kernfunktionen.<br>Ein verlässliches Ergebnis.</h2>
+      <p>Entwickelt für die spezifischen Anforderungen institutioneller Asset Manager.</p>
+    </div>
+    <div class="feat-g">
+      <div class="fc fade-up">
+        <div class="fc__ic"><svg viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><path d="M14 17.5h7M17.5 14v7"/></svg></div>
+        <div><h3>Parameter-Aggregation</h3><p>Objekt-, Markt- und ERP-Daten werden strukturiert zusammengeführt. Manuelle Übertragungsfehler zwischen Quellen sind ausgeschlossen.</p></div>
+      </div>
+      <div class="fc fade-up stagger-1">
+        <div class="fc__ic"><svg viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg></div>
+        <div><h3>Intelligente Validierung</h3><p>Jede Eingabe wird sofort auf Plausibilität geprüft. Das System warnt, bevor eine falsche Annahme den gesamten Finanzplan verzerrt.</p></div>
+      </div>
+      <div class="fc fade-up stagger-2">
+        <div class="fc__ic"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 6v6l4 2"/></svg></div>
+        <div><h3>Echtzeit-Steuermodellierung</h3><p>AfA-Staffeln, Zinsstrukturen und Tilgungsverläufe dynamisch berechnet. Parameteränderungen wirken sofort auf alle Kennzahlen.</p></div>
+      </div>
+      <div class="fc fade-up stagger-3">
+        <div class="fc__ic"><svg viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg></div>
+        <div><h3>Transparente Renditekennzahlen</h3><p>EK-Rendite, Cashflow-Verlauf und Endwert im Szenariovergleich — nachvollziehbar begründet, als PDF-Bericht exportierbar.</p></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- REFERENZEN -->
+<section class="sec" id="referenzen" style="background:var(--off2)">
+  <div class="w">
+    <div class="social__head fade-up">
+      <span class="ey">Vertrauen aus der Praxis</span>
+      <h2 style="margin-top:10px;font-size:clamp(1.5rem,2.8vw,2.1rem);font-weight:700;letter-spacing:-.02em">Was Asset Manager sagen</h2>
+    </div>
+    <div class="quotes-grid">
+      <div class="quote-wrap fade-up">
+        <blockquote>
+          „Mit immology haben wir unsere Investitionsanalysen von zwei Tagen auf drei Stunden reduziert.
+          Die Szenariovergleiche sind revisionssicher und intern sofort prüfbar —
+          das war mit unseren bisherigen Excel-Modellen schlicht nicht möglich."
+        </blockquote>
+        <div class="qa">
+          <div class="qa__av">TM</div>
+          <div>
+            <div class="qa__n">Thomas M.</div>
+            <div class="qa__r">Head of Asset Management · Wohnungsunternehmen, Süddeutschland</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quote-wrap fade-up stagger-1">
+        <blockquote>
+          „Endlich haben wir ein Werkzeug, das die Komplexität des Vollständigen Finanzplans wirklich abbildet.
+          Die automatische Steuermodellierung spart uns nicht nur Zeit — sie gibt uns Sicherheit,
+          dass unsere Renditekennzahlen gegenüber Aufsichtsrat und Beirat standhalten."
+        </blockquote>
+        <div class="qa">
+          <div class="qa__av">SK</div>
+          <div>
+            <div class="qa__n">Sabine K.</div>
+            <div class="qa__r">Leiterin Portfoliomanagement · Kommunales Wohnungsunternehmen, NRW</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="quote-wrap fade-up stagger-2">
+        <blockquote>
+          „Szenarien durchzuspielen war früher ein halber Arbeitstag. Heute klicken wir uns in Minuten
+          durch Basis-, Optimistisch- und Pessimistisch-Variante — mit vollständigem Audit-Trail.
+          Das verändert, wie wir Ankaufsentscheidungen treffen."
+        </blockquote>
+        <div class="qa">
+          <div class="qa__av">MR</div>
+          <div>
+            <div class="qa__n">Markus R.</div>
+            <div class="qa__r">Kaufmännischer Vorstand · Genossenschaft, Norddeutschland</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA BAND -->
+<section class="cband" id="demo">
+  <div class="w">
+    <div class="cband__i fade-up">
+      <span class="ey" style="display:block;margin-bottom:18px">Bereit?</span>
+      <h2>Verlässliche Investitionsentscheidungen<br>beginnen heute.</h2>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:32px;margin-top:40px">
+        <p style="color:rgba(255,255,255,.48);font-size:1rem;margin:0">In wenigen Stunden einsatzbereit.</p>
+        <a class="btn btn-y" href="#demo" style="font-size:1rem;padding:16px 36px;display:inline-flex">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          Demo buchen
+        </a>
+        <p class="cband__fn" style="margin:0">DSGVO-konform · Hosting in Deutschland</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="foot">
+  <div class="foot__i">
+    <span class="foot__c">© 2026 immology GmbH</span>
+    <nav class="foot__links">
+      <a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">AGB</a><a href="#">Kontakt</a>
+    </nav>
+  </div>
+</footer>
+
+</div><!-- /content-wrap -->
+
+<!-- MOBILE STICKY -->
+<div class="mcta"><button class="btn-y btn dm-open-btn" style="border:none;cursor:pointer">Demo buchen</button></div>
+
+<!-- ===== DEMO-MODAL ===== -->
+<div class="dm-overlay" id="dmOverlay" role="dialog" aria-modal="true" aria-label="Demo buchen">
+  <div class="dm-modal">
+
+    <!-- Left info column -->
+    <div class="dm-left">
+      <div class="dm-logo">
+        <div class="dm-logo-dot">immo</div>
+        <span style="font-size:.90rem;font-weight:400;color:#fff;letter-spacing:-.01em">logy</span>
+      </div>
+      <div class="dm-eyebrow">Live-Demo</div>
+      <h2 class="dm-headline">30 Minuten, die Ihre Investitionsrechnung verändern.</h2>
+      <p class="dm-sub">Wir zeigen Ihnen die VoFi-Rechnung live an einem Beispielobjekt aus Ihrem Bestand – ohne Vorbereitung Ihrerseits.</p>
+      <div class="dm-checks">
+        <div class="dm-check"><span class="dm-check-ic">✓</span>30 Min. per Videocall</div>
+        <div class="dm-check"><span class="dm-check-ic">✓</span>Live am echten Rechenbeispiel</div>
+        <div class="dm-check"><span class="dm-check-ic">✓</span>Unverbindlich &amp; kostenfrei</div>
+      </div>
+      <div class="dm-contact">
+        <div class="dm-avatar">MB</div>
+        <div>
+          <div style="font-size:14px;font-weight:600">M. Berger</div>
+          <div style="font-size:12.5px;color:#a6abc4">Produktberatung immology</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right action column -->
+    <div class="dm-right">
+      <div class="dm-topbar">
+        <div class="dm-tabs">
+          <button class="dm-tab dm-active" id="dmTabBuchen">Termin buchen</button>
+          <button class="dm-tab" id="dmTabAnfragen">Termin anfragen</button>
+        </div>
+        <button class="dm-close" id="dmClose" aria-label="Schließen">×</button>
+      </div>
+      <div id="dmBody"></div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+// Video playback rate
+const heroBg = document.getElementById('heroBg')
+if(heroBg){ heroBg.playbackRate = 0.75 }
+
+// Main video player
+function playMain(){
+  const vid = document.getElementById('mainVid')
+  const btn = document.getElementById('vplayerBtn')
+  const thumb = document.getElementById('vthumbVid')
+  if(thumb) thumb.style.display='none'
+  vid.style.display='block'
+  btn.style.display='none'
+  vid.controls=true
+  vid.play().catch(()=>{})
+}
+
+// Sticky nav
+const nav = document.getElementById('nav')
+function updateNav(){
+  const y = window.scrollY
+  if(y > 80){
+    nav.classList.add('nav--solid')
+    nav.classList.remove('nav--over')
+  } else {
+    nav.classList.remove('nav--solid')
+    nav.classList.add('nav--over')
+  }
+}
+window.addEventListener('scroll', updateNav, {passive:true})
+updateNav()
+
+// IntersectionObserver – fade-up
+const observer = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ e.target.classList.add('in-view'); observer.unobserve(e.target) }
+  })
+},{threshold:.15})
+document.querySelectorAll('.fade-up').forEach(el=>observer.observe(el))
+
+// Count-up animation
+function countUp(el, target, duration){
+  let start=0, step=duration/60
+  const inc = target/60
+  const timer = setInterval(()=>{
+    start+=inc
+    if(start>=target){ el.textContent=target; clearInterval(timer); return }
+    el.textContent = Math.floor(start)
+  }, step)
+}
+const countObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      const el = e.target
+      const target = parseInt(el.dataset.target)
+      countUp(el, target, 800)
+      countObserver.unobserve(el)
+    }
+  })
+},{threshold:.5})
+document.querySelectorAll('.count').forEach(el=>countObserver.observe(el))
+
+// Scroll-spy – nur aktiv nach erstem Scroll, deaktiviert wenn über Hero
+const sections = ['produkt','video','problem','features','referenzen']
+let hasScrolled = false
+window.addEventListener('scroll', () => { hasScrolled = true }, { passive: true, once: true })
+
+const spyObs = new IntersectionObserver((entries) => {
+  if (!hasScrolled) return
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      document.querySelectorAll('.nav__links a').forEach(a => {
+        a.classList.toggle('active', a.dataset.section === e.target.id)
+      })
+    }
+  })
+}, { rootMargin: '-40% 0px -40% 0px' })
+sections.forEach(id => { const el = document.getElementById(id); if (el) spyObs.observe(el) })
+
+// Alle Links deaktivieren wenn ganz oben (Hero sichtbar)
+const heroEl = document.getElementById('hero')
+const heroObs = new IntersectionObserver((entries) => {
+  if (entries[0].isIntersecting && entries[0].intersectionRatio > 0.5) {
+    document.querySelectorAll('.nav__links a').forEach(a => a.classList.remove('active'))
+  }
+}, { threshold: 0.5 })
+if (heroEl) heroObs.observe(heroEl)
+</script>
+<script>
+// ── Demo-Modal ────────────────────────────────────────────────────────────────
+(function() {
+  const overlay = document.getElementById('dmOverlay');
+  const body    = document.getElementById('dmBody');
+  const tabB    = document.getElementById('dmTabBuchen');
+  const tabA    = document.getElementById('dmTabAnfragen');
+  const closeBtn= document.getElementById('dmClose');
+
+  // ── State ──────────────────────────────────────────────────────────────────
+  const s = {
+    tab: 'buchen',      // 'buchen' | 'anfragen'
+    step: 'select',     // 'select' | 'details' | 'done'
+    dayIdx: 0,
+    slotIdx: -1,
+    name: '', email: '', company: '', note: '',
+    reqName: '', reqEmail: '', reqNote: '',
+    sent: false
+  };
+
+  // ── Data ───────────────────────────────────────────────────────────────────
+  const DAYS  = [
+    { wd: 'Mo', date: '13.07.' },
+    { wd: 'Di', date: '14.07.' },
+    { wd: 'Mi', date: '15.07.' },
+    { wd: 'Do', date: '16.07.' },
+    { wd: 'Fr', date: '17.07.' }
+  ];
+  const TIMES = ['09:00','09:30','10:00','11:00','13:30','14:00','15:30','16:00'];
+  const TAKEN_BY_DAY = [[1,4],[0,5,6],[2],[3,7],[1,2,6]];
+  const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+
+  // ── Helpers ────────────────────────────────────────────────────────────────
+  function e(tag, attrs, ...children) {
+    const el = document.createElement(tag);
+    for (const [k,v] of Object.entries(attrs||{})) {
+      if (k === 'className') el.className = v;
+      else if (k === 'style') el.style.cssText = v;
+      else if (k.startsWith('on')) el.addEventListener(k.slice(2).toLowerCase(), v);
+      else el.setAttribute(k, v);
+    }
+    for (const c of children) {
+      if (c == null) continue;
+      el.append(typeof c === 'string' ? document.createTextNode(c) : c);
+    }
+    return el;
+  }
+
+  function pickedLabel() {
+    if (s.slotIdx < 0) return '';
+    const d = DAYS[s.dayIdx];
+    return `${d.wd}, ${d.date}2026 · ${TIMES[s.slotIdx]} Uhr`;
+  }
+
+  // ── Renderers ──────────────────────────────────────────────────────────────
+  function renderSteps() {
+    const stepDef = [
+      { label: 'Termin wählen', key: 'select' },
+      { label: 'Ihre Daten',    key: 'details' },
+      { label: 'Bestätigung',   key: 'done'    }
+    ];
+    const order = ['select','details','done'];
+    const curIdx = order.indexOf(s.step);
+
+    const wrap = e('div', { className: 'dm-steps' });
+    stepDef.forEach((step, i) => {
+      const done   = i < curIdx;
+      const active = i === curIdx;
+      const numBg    = done ? '#eaf6ee' : active ? '#12142a' : '#eceef4';
+      const numColor = done ? '#2f9e5f' : active ? '#f6c945' : '#9aa0af';
+      const txtColor = done ? '#2f9e5f' : active ? '#12142a' : '#9aa0af';
+
+      const stepEl = e('span', { className: 'dm-step', style: `color:${txtColor}` },
+        e('span', { className: 'dm-step-num', style: `background:${numBg};color:${numColor}` },
+          done ? '✓' : String(i+1)
+        ),
+        step.label
+      );
+      wrap.append(stepEl);
+      if (i < stepDef.length - 1) wrap.append(e('span', { className: 'dm-step-line' }));
+    });
+    return wrap;
+  }
+
+  function renderSelect() {
+    const taken = TAKEN_BY_DAY[s.dayIdx] || [];
+
+    // day chips
+    const daysEl = e('div', { className: 'dm-days' },
+      ...DAYS.map((d, i) => {
+        const sel = i === s.dayIdx;
+        const btn = e('button', {
+          className: 'dm-day' + (sel ? ' dm-sel' : ''),
+          type: 'button'
+        },
+          e('div', { className: 'dm-day-wd' }, d.wd),
+          e('div', { className: 'dm-day-dt' }, d.date)
+        );
+        btn.addEventListener('click', () => { s.dayIdx = i; s.slotIdx = -1; render(); });
+        return btn;
+      })
+    );
+
+    // slot grid
+    const slotsEl = e('div', { className: 'dm-slots' },
+      ...TIMES.map((t, i) => {
+        const isTaken = taken.includes(i);
+        const isSel   = i === s.slotIdx;
+        const cls = 'dm-slot' + (isTaken ? ' dm-taken' : isSel ? ' dm-sel' : '');
+        const btn = e('button', { className: cls, type: 'button' }, t);
+        if (isTaken) btn.disabled = true;
+        else btn.addEventListener('click', () => { s.slotIdx = i; render(); });
+        return btn;
+      })
+    );
+
+    const hasSlot = s.slotIdx >= 0;
+    const hint = hasSlot
+      ? `Ausgewählt: ${DAYS[s.dayIdx].wd}, ${DAYS[s.dayIdx].date}2026 · ${TIMES[s.slotIdx]} Uhr`
+      : 'Bitte Tag und Uhrzeit wählen.';
+
+    const ctaBtn = e('button', {
+      className: 'dm-cta' + (hasSlot ? ' dm-cta-primary' : ''),
+      type: 'button'
+    }, 'Weiter zu Ihren Daten →');
+    if (!hasSlot) ctaBtn.disabled = true;
+    ctaBtn.addEventListener('click', () => { if (hasSlot) { s.step = 'details'; render(); } });
+
+    return e('div', {},
+      e('div', { style: 'font-size:14px;font-weight:600;color:#12142a;margin-bottom:12px' }, 'Tag wählen'),
+      daysEl,
+      e('div', { style: 'font-size:14px;font-weight:600;color:#12142a;margin-bottom:12px' },
+        'Uhrzeit wählen ',
+        e('span', { style: 'font-weight:400;color:#6b7180' }, '(MEZ)')
+      ),
+      slotsEl,
+      e('div', { className: 'dm-foot' },
+        e('div', { className: 'dm-foot-hint' }, hint),
+        ctaBtn
+      )
+    );
+  }
+
+  function renderDetails() {
+    const apptCard = e('div', { className: 'dm-appt' },
+      e('div', { style: 'display:flex;align-items:center;gap:12px' },
+        e('div', { className: 'dm-appt-icon' }, '📅'),
+        e('div', {},
+          e('div', { style: 'font-size:14.5px;font-weight:700;color:#12142a' }, pickedLabel()),
+          e('div', { style: 'font-size:12.5px;color:#6b7180' }, '30 Min. Videocall · M. Berger')
+        )
+      ),
+      (() => {
+        const btn = e('button', { className: 'dm-appt-change', type: 'button' }, 'Ändern');
+        btn.addEventListener('click', () => { s.step = 'select'; render(); });
+        return btn;
+      })()
+    );
+
+    // inputs – use closures to persist across re-renders
+    const nameInput = e('input', {
+      className: 'dm-input', type: 'text',
+      placeholder: 'Vor- und Nachname', value: s.name
+    });
+    nameInput.addEventListener('input', ev => { s.name = ev.target.value; updateBookBtn(); });
+
+    const companyInput = e('input', {
+      className: 'dm-input', type: 'text',
+      placeholder: 'z. B. Wohnbau GmbH', value: s.company
+    });
+    companyInput.addEventListener('input', ev => { s.company = ev.target.value; });
+
+    const emailInput = e('input', {
+      className: 'dm-input', type: 'email',
+      placeholder: 'name@unternehmen.de', value: s.email
+    });
+    emailInput.addEventListener('input', ev => { s.email = ev.target.value; updateBookBtn(); });
+
+    const noteInput = e('input', {
+      className: 'dm-input', type: 'text',
+      placeholder: 'z. B. Steuermodellierung, Portfolio-Import …', value: s.note
+    });
+    noteInput.addEventListener('input', ev => { s.note = ev.target.value; });
+
+    const bookOk = () => s.name.trim().length > 1 && EMAIL_RE.test(s.email.trim());
+
+    const bookBtn = e('button', {
+      className: 'dm-cta' + (bookOk() ? ' dm-cta-primary' : ''),
+      type: 'button'
+    }, 'Verbindlich buchen →');
+    if (!bookOk()) bookBtn.disabled = true;
+    bookBtn.addEventListener('click', () => {
+      if (!bookOk()) return;
+      s.step = 'done';
+      render();
+      emailjs.send('service_190370', 'template_demo', {
+        termin:  pickedLabel(),
+        name:    s.name.trim(),
+        email:   s.email.trim(),
+        company: s.company.trim() || '–',
+        note:    s.note.trim()    || '–'
+      }).catch(err => console.error('[emailjs] Fehler beim Senden:', err));
+    });
+
+    function updateBookBtn() {
+      const ok = bookOk();
+      bookBtn.disabled = !ok;
+      bookBtn.className = 'dm-cta' + (ok ? ' dm-cta-primary' : '');
+    }
+
+    return e('div', {},
+      apptCard,
+      e('div', { className: 'dm-grid2' },
+        e('label', { className: 'dm-label', style: 'margin-bottom:0' }, 'Name*', nameInput),
+        e('label', { className: 'dm-label', style: 'margin-bottom:0' }, 'Unternehmen', companyInput)
+      ),
+      e('label', { className: 'dm-label' }, 'Geschäftliche E-Mail*', emailInput),
+      e('label', { className: 'dm-label' },
+        e('span', {}, 'Worauf sollen wir eingehen? ',
+          e('span', { style: 'font-weight:400;color:#6b7180' }, '(optional)')
+        ),
+        noteInput
+      ),
+      e('div', { className: 'dm-foot', style: 'padding-top:20px' },
+        e('div', { className: 'dm-privacy' },
+          'Mit der Buchung stimmen Sie der Verarbeitung gemäß ',
+          e('a', { href: '#' }, 'Datenschutzerklärung'), ' zu.'
+        ),
+        bookBtn
+      )
+    );
+  }
+
+  function renderDone() {
+    const d = DAYS[s.dayIdx];
+    const t = TIMES[s.slotIdx] || '';
+    const detail = `${d.wd}, ${d.date}2026 um ${t} Uhr – 30 Minuten Videocall mit M. Berger, Produktberatung immology.`;
+
+    const resetBtn = e('button', { className: 'dm-btn-sec', type: 'button' }, 'Termin ändern');
+    resetBtn.addEventListener('click', () => { s.step = 'select'; render(); });
+
+    return e('div', { className: 'dm-done' },
+      e('div', { className: 'dm-done-ic' }, '✓'),
+      e('div', { className: 'dm-done-h' }, 'Ihr Termin ist gebucht.'),
+      e('div', { className: 'dm-done-sub' }, detail),
+      e('div', { className: 'dm-done-list' },
+        e('div', { className: 'dm-done-list-item' },
+          e('span', { className: 'dm-done-check' }, '✓'),
+          'Kalendereinladung mit Videocall-Link per E-Mail'
+        ),
+        e('div', { className: 'dm-done-list-item' },
+          e('span', { className: 'dm-done-check' }, '✓'),
+          'Erinnerung 24 Stunden vorher'
+        ),
+        e('div', { className: 'dm-done-list-item' },
+          e('span', { className: 'dm-done-check' }, '✓'),
+          'Verschieben oder Absagen jederzeit über den Link'
+        )
+      ),
+      e('div', { className: 'dm-done-btns' },
+        (() => {
+          const calBtn = e('button', { className: 'dm-btn-dark', type: 'button' }, '+ Zum Kalender hinzufügen');
+          calBtn.addEventListener('click', () => {
+            const d = DAYS[s.dayIdx];
+            const t = TIMES[s.slotIdx];
+            // parse "13.07." → day=13, month=07
+            const parts = d.date.split('.');
+            const day   = parts[0].padStart(2,'0');
+            const month = parts[1].padStart(2,'0');
+            const year  = '2026';
+            const [hh, mm] = t.split(':');
+            // July = CEST = UTC+2 → subtract 2h for UTC
+            const startMin = parseInt(hh) * 60 + parseInt(mm) - 120;
+            const endMin   = startMin + 30;
+            const fmt = (totalMin) => {
+              const h = String(Math.floor(((totalMin % 1440) + 1440) % 1440 / 60)).padStart(2,'0');
+              const m = String(totalMin % 60).padStart(2,'0');
+              return `${year}${month}${day}T${h}${m}00Z`;
+            };
+            const uid = `demo-${year}${month}${day}T${hh}${mm}-${Date.now()}@immology.de`;
+            const ics = [
+              'BEGIN:VCALENDAR',
+              'VERSION:2.0',
+              'PRODID:-//immology//Demo-Buchung//DE',
+              'CALSCALE:GREGORIAN',
+              'METHOD:REQUEST',
+              'BEGIN:VEVENT',
+              `UID:${uid}`,
+              `DTSTART:${fmt(startMin)}`,
+              `DTEND:${fmt(endMin)}`,
+              'SUMMARY:Live-Demo immology',
+              `DESCRIPTION:30 Minuten Videocall mit M. Berger\\, Produktberatung immology.`,
+              'ORGANIZER;CN=immology:mailto:demo@immology.de',
+              `ATTENDEE;CN=${s.name}:mailto:${s.email}`,
+              'END:VEVENT',
+              'END:VCALENDAR'
+            ].join('\r\n');
+            const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+            const url  = URL.createObjectURL(blob);
+            const a    = document.createElement('a');
+            a.href     = url;
+            a.download = 'immology-termin.ics';
+            a.click();
+            URL.revokeObjectURL(url);
+          });
+          return calBtn;
+        })(),
+        resetBtn
+      )
+    );
+  }
+
+  // ── Anfragen flow ──────────────────────────────────────────────────────────
+  function renderAnfragen() {
+    if (s.sent) return renderAnfragenDone();
+
+    const reqNameInput = e('input', {
+      className: 'dm-input', type: 'text',
+      placeholder: 'Vor- und Nachname', value: s.reqName
+    });
+    reqNameInput.addEventListener('input', ev => { s.reqName = ev.target.value; updateReqBtn(); });
+
+    const reqCompany = e('input', {
+      className: 'dm-input', type: 'text',
+      placeholder: 'z. B. Wohnbau GmbH'
+    });
+
+    const reqEmailInput = e('input', {
+      className: 'dm-input', type: 'email',
+      placeholder: 'name@unternehmen.de', value: s.reqEmail
+    });
+    reqEmailInput.addEventListener('input', ev => { s.reqEmail = ev.target.value; updateReqBtn(); });
+
+    const reqNoteTA = e('textarea', {
+      className: 'dm-textarea',
+      placeholder: 'z. B. „Nächste Woche vormittags, gerne mit Fokus auf Steuermodellierung"',
+      rows: '3'
+    });
+
+    const reqOk = () => s.reqName.trim().length > 1 && EMAIL_RE.test(s.reqEmail.trim());
+
+    const sendBtn = e('button', {
+      className: 'dm-cta' + (reqOk() ? ' dm-cta-primary' : ''),
+      type: 'button'
+    }, 'Anfrage senden →');
+    if (!reqOk()) sendBtn.disabled = true;
+    sendBtn.addEventListener('click', () => {
+      if (!reqOk()) return;
+      s.sent = true;
+      render();
+      emailjs.send('service_190370', 'template_demo_anfrage', {
+        name:    s.reqName.trim(),
+        email:   s.reqEmail.trim(),
+        company: reqCompany.value.trim() || '–',
+        note:    reqNoteTA.value.trim()  || '–'
+      }).catch(err => console.error('[emailjs] Fehler beim Senden:', err));
+    });
+
+    function updateReqBtn() {
+      const ok = reqOk();
+      sendBtn.disabled = !ok;
+      sendBtn.className = 'dm-cta' + (ok ? ' dm-cta-primary' : '');
+    }
+
+    return e('div', {},
+      e('p', { style: 'font-size:14px;color:#6b7180;line-height:1.6;margin:0 0 20px;text-wrap:pretty' },
+        'Kein passender Slot dabei? Schreiben Sie uns Ihren Wunschzeitraum – wir melden uns innerhalb eines Werktags mit einem Terminvorschlag.'
+      ),
+      e('div', { className: 'dm-grid2' },
+        e('label', { className: 'dm-label', style: 'margin-bottom:0' }, 'Name*', reqNameInput),
+        e('label', { className: 'dm-label', style: 'margin-bottom:0' }, 'Unternehmen', reqCompany)
+      ),
+      e('label', { className: 'dm-label', style: 'margin-top:14px' }, 'E-Mail*', reqEmailInput),
+      e('label', { className: 'dm-label' },
+        e('span', {}, 'Wunschzeitraum / Nachricht'),
+        reqNoteTA
+      ),
+      e('div', { className: 'dm-foot', style: 'padding-top:20px' },
+        e('div', { className: 'dm-privacy' },
+          'Mit dem Absenden stimmen Sie der Verarbeitung gemäß ',
+          e('a', { href: '#' }, 'Datenschutzerklärung'), ' zu.'
+        ),
+        sendBtn
+      )
+    );
+  }
+
+  function renderAnfragenDone() {
+    const backBtn = e('button', { className: 'dm-btn-sec', type: 'button' }, 'Zurück');
+    backBtn.addEventListener('click', () => { s.sent = false; render(); });
+
+    return e('div', { className: 'dm-done' },
+      e('div', { className: 'dm-done-ic' }, '✓'),
+      e('div', { className: 'dm-done-h' }, 'Anfrage gesendet.'),
+      e('div', { className: 'dm-done-sub' },
+        'Wir melden uns innerhalb eines Werktags mit einem konkreten Terminvorschlag bei Ihnen.'
+      ),
+      e('div', { className: 'dm-done-btns', style: 'margin-top:24px' }, backBtn)
+    );
+  }
+
+  // ── Main render ────────────────────────────────────────────────────────────
+  function render() {
+    // tabs
+    tabB.classList.toggle('dm-active', s.tab === 'buchen');
+    tabA.classList.toggle('dm-active', s.tab === 'anfragen');
+
+    // body
+    body.innerHTML = '';
+    if (s.tab === 'buchen') {
+      if (s.step !== 'done') body.append(renderSteps());
+      if (s.step === 'select')  body.append(renderSelect());
+      if (s.step === 'details') body.append(renderDetails());
+      if (s.step === 'done')    body.append(renderDone());
+    } else {
+      body.append(renderAnfragen());
+    }
+  }
+
+  // ── Open / close ───────────────────────────────────────────────────────────
+  function open() {
+    overlay.classList.add('dm-open');
+    document.body.style.overflow = 'hidden';
+    render();
+  }
+  function close() {
+    overlay.classList.remove('dm-open');
+    document.body.style.overflow = '';
+  }
+
+  closeBtn.addEventListener('click', close);
+  overlay.addEventListener('click', ev => { if (ev.target === overlay) close(); });
+  document.addEventListener('keydown', ev => { if (ev.key === 'Escape') close(); });
+
+  tabB.addEventListener('click', () => { s.tab = 'buchen'; render(); });
+  tabA.addEventListener('click', () => { s.tab = 'anfragen'; render(); });
+
+  // ── Wire all "Demo buchen" triggers ───────────────────────────────────────
+  document.querySelectorAll('.dm-open-btn, a[href="#demo"]').forEach(el => {
+    el.addEventListener('click', ev => { ev.preventDefault(); open(); });
+  });
+})();
+</script>
+</body>
+</html>
