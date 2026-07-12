@@ -1,5 +1,6 @@
 import { useState, FormEvent } from 'react'
 import { useAuthContext } from '../auth/AuthContext'
+import { AuthBackground } from './AuthBackground'
 
 export default function SetPasswordScreen() {
   const { updatePassword, session } = useAuthContext()
@@ -28,27 +29,17 @@ export default function SetPasswordScreen() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'var(--color-primary)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px',
-      fontFamily: 'var(--font-family)',
-    }}>
+    <AuthBackground>
       <div style={{
-        width: '100%',
-        maxWidth: '420px',
         background: '#fff',
         borderRadius: '20px',
         boxShadow: '0 40px 120px rgba(0,0,0,.45)',
         overflow: 'hidden',
       }}>
-        {/* Header */}
+        {/* Logo */}
         <div style={{
           background: 'var(--color-primary)',
-          padding: '32px 36px 28px',
+          padding: '24px 36px',
           display: 'flex',
           alignItems: 'center',
           gap: '1px',
@@ -56,29 +47,22 @@ export default function SetPasswordScreen() {
           <span style={{
             background: 'var(--color-accent)',
             borderRadius: '50%',
-            width: '38px',
-            height: '38px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 400,
-            fontSize: '.90rem',
-            color: 'var(--color-primary)',
-            flexShrink: 0,
+            width: '38px', height: '38px',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 400, fontSize: '.90rem', color: 'var(--color-primary)', flexShrink: 0,
           }}>immo</span>
           <span style={{ fontSize: '.90rem', fontWeight: 400, color: '#fff', letterSpacing: '-.01em' }}>logy</span>
         </div>
 
         {/* Form */}
-        <div style={{ padding: '32px 36px 36px' }}>
+        <div style={{ padding: '28px 36px 32px' }}>
           <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '8px' }}>
             Willkommen{name ? `, ${name}` : ''}!
           </div>
-          <div style={{ fontSize: '14px', color: '#6b7180', marginBottom: '24px', lineHeight: 1.6 }}>
+          <div style={{ fontSize: '14px', color: '#6b7180', marginBottom: '20px', lineHeight: 1.6 }}>
             Bitte legen Sie ein persönliches Passwort fest, um Ihr Konto zu aktivieren.
           </div>
-
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <label className="es-label">
               Neues Passwort
               <input
@@ -92,7 +76,6 @@ export default function SetPasswordScreen() {
                 style={{ marginTop: '6px' }}
               />
             </label>
-
             <label className="es-label">
               Passwort bestätigen
               <input
@@ -106,7 +89,6 @@ export default function SetPasswordScreen() {
                 style={{ marginTop: '6px' }}
               />
             </label>
-
             {error && (
               <div style={{
                 background: '#fdeae6', border: '1px solid #f5c9be',
@@ -116,7 +98,6 @@ export default function SetPasswordScreen() {
                 {error}
               </div>
             )}
-
             <button
               type="submit"
               disabled={loading}
@@ -125,7 +106,8 @@ export default function SetPasswordScreen() {
                 background: loading ? '#eceef4' : 'var(--color-accent)',
                 color: loading ? '#9aa0af' : 'var(--color-primary)',
                 fontFamily: 'inherit', fontSize: '15px', fontWeight: 700,
-                padding: '14px', borderRadius: '10px', cursor: loading ? 'default' : 'pointer',
+                padding: '14px', borderRadius: '10px',
+                cursor: loading ? 'default' : 'pointer',
                 marginTop: '4px',
                 boxShadow: loading ? 'none' : '0 8px 24px rgba(242,213,81,.3)',
                 transition: 'background .15s, box-shadow .15s',
@@ -136,6 +118,6 @@ export default function SetPasswordScreen() {
           </form>
         </div>
       </div>
-    </div>
+    </AuthBackground>
   )
 }

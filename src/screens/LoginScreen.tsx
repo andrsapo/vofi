@@ -1,5 +1,6 @@
-import { useState, FormEvent } from 'react'
+import React, { useState, FormEvent } from 'react'
 import { useAuthContext } from '../auth/AuthContext'
+import { AuthBackground } from './AuthBackground'
 
 export default function LoginScreen() {
   const { signIn } = useAuthContext()
@@ -26,27 +27,17 @@ export default function LoginScreen() {
   }
 
   return (
-    <div style={{
-      minHeight: '100vh',
-      background: 'var(--color-primary)',
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      padding: '24px',
-      fontFamily: 'var(--font-family)',
-    }}>
+    <AuthBackground>
       <div style={{
-        width: '100%',
-        maxWidth: '420px',
         background: '#fff',
         borderRadius: '20px',
         boxShadow: '0 40px 120px rgba(0,0,0,.45)',
         overflow: 'hidden',
       }}>
-        {/* Header */}
+        {/* Logo */}
         <div style={{
           background: 'var(--color-primary)',
-          padding: '32px 36px 28px',
+          padding: '24px 36px',
           display: 'flex',
           alignItems: 'center',
           gap: '1px',
@@ -54,25 +45,19 @@ export default function LoginScreen() {
           <span style={{
             background: 'var(--color-accent)',
             borderRadius: '50%',
-            width: '38px',
-            height: '38px',
-            display: 'inline-flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            fontWeight: 400,
-            fontSize: '.90rem',
-            color: 'var(--color-primary)',
-            flexShrink: 0,
+            width: '38px', height: '38px',
+            display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
+            fontWeight: 400, fontSize: '.90rem', color: 'var(--color-primary)', flexShrink: 0,
           }}>immo</span>
           <span style={{ fontSize: '.90rem', fontWeight: 400, color: '#fff', letterSpacing: '-.01em' }}>logy</span>
         </div>
 
         {/* Form */}
-        <div style={{ padding: '32px 36px 36px' }}>
-          <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '24px' }}>
+        <div style={{ padding: '28px 36px 32px' }}>
+          <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '20px' }}>
             Anmelden
           </div>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             <label className="es-label">
               E-Mail
               <input
@@ -86,7 +71,6 @@ export default function LoginScreen() {
                 style={{ marginTop: '6px' }}
               />
             </label>
-
             <label className="es-label">
               Passwort
               <input
@@ -100,7 +84,6 @@ export default function LoginScreen() {
                 style={{ marginTop: '6px' }}
               />
             </label>
-
             {error && (
               <div style={{
                 background: '#fdeae6', border: '1px solid #f5c9be',
@@ -110,7 +93,6 @@ export default function LoginScreen() {
                 {error}
               </div>
             )}
-
             <button
               type="submit"
               disabled={loading}
@@ -119,7 +101,8 @@ export default function LoginScreen() {
                 background: loading ? '#eceef4' : 'var(--color-accent)',
                 color: loading ? '#9aa0af' : 'var(--color-primary)',
                 fontFamily: 'inherit', fontSize: '15px', fontWeight: 700,
-                padding: '14px', borderRadius: '10px', cursor: loading ? 'default' : 'pointer',
+                padding: '14px', borderRadius: '10px',
+                cursor: loading ? 'default' : 'pointer',
                 marginTop: '4px',
                 boxShadow: loading ? 'none' : '0 8px 24px rgba(242,213,81,.3)',
                 transition: 'background .15s, box-shadow .15s',
@@ -130,6 +113,6 @@ export default function LoginScreen() {
           </form>
         </div>
       </div>
-    </div>
+    </AuthBackground>
   )
 }
