@@ -127,10 +127,13 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
       erpRepository.fuegePersonHinzu(person)
       const neu = erpRepository.ladePersonen()
       setPersonen(neu)
-      setAusgewaehltId(person.id)
-      setNeuModus(false)
-      setNeuerEntwurf(leererEntwurf())
-      setEinladenStatus('idle')
+      // Nach 2 Sekunden zur neuen Person wechseln
+      setTimeout(() => {
+        setAusgewaehltId(person.id)
+        setNeuModus(false)
+        setNeuerEntwurf(leererEntwurf())
+        setEinladenStatus('idle')
+      }, 2000)
     } catch {
       setEinladenStatus('error')
       setEinladenFehler('Netzwerkfehler. Bitte versuchen Sie es erneut.')
@@ -298,7 +301,17 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
                       {einladenFehler}
                     </div>
                   )}
-                  {isNeu && (
+                  {isNeu && einladenStatus === 'sent' && (
+                    <div style={{
+                      background: '#eaf6ee', border: '1px solid #a8dbb8', borderRadius: '8px',
+                      padding: '10px 14px', fontSize: '13px', color: '#2f7a4a', marginTop: '8px',
+                      display: 'flex', alignItems: 'center', gap: '8px',
+                    }}>
+                      <span style={{ fontSize: '15px' }}>✓</span>
+                      Einladung wurde erfolgreich an <strong>{neuerEntwurf.email}</strong> gesendet.
+                    </div>
+                  )}
+                  {isNeu && einladenStatus === 'idle' && (
                     <div style={{
                       fontSize: '12.5px', color: '#6b7180', marginTop: '8px', lineHeight: 1.5,
                     }}>
