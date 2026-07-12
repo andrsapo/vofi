@@ -1,118 +1,323 @@
 import React, { useState, FormEvent } from 'react'
 import { useAuthContext } from '../auth/AuthContext'
-import { AuthBackground } from './AuthBackground'
+
+const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+
+/* Markengrafik als inline SVG – Seitenverhältnis 2752:1006, exakt aus login-grafik.png */
+function LoginGrafik() {
+  return (
+    <svg
+      viewBox="0 0 2752 1006"
+      xmlns="http://www.w3.org/2000/svg"
+      style={{ width: '100%', height: 'auto', display: 'block' }}
+      aria-hidden="true"
+    >
+      {/* Linkes blaues Dreieck groß */}
+      <polygon points="0,1006 680,1006 0,480" fill="#5b8fdc" />
+      {/* Linkes blaues Dreieck klein unten */}
+      <polygon points="0,1006 320,1006 0,780" fill="#ffffff" opacity="0.15" />
+      {/* Mittleres gelbes Dreieck (linke Fläche des Würfels) */}
+      <polygon points="780,0 1210,530 780,1006 580,1006 580,0" fill="#f0c740" />
+      {/* Weiße Fläche oben (Deckel des Würfels) */}
+      <polygon points="780,0 1800,0 1800,530 1210,530" fill="#ffffff" />
+      {/* Blaue Fläche unten (Boden des Würfels) */}
+      <polygon points="1210,530 1800,530 2200,1006 780,1006" fill="#5b8fdc" />
+      {/* Gelbes Dreieck unten rechts */}
+      <polygon points="1800,530 2200,1006 2752,1006 2752,530" fill="#f0c740" opacity="0.6" />
+      {/* Rechtes blaues Dreieck */}
+      <polygon points="1800,0 2752,0 2752,530 1800,530" fill="#5b8fdc" opacity="0.85" />
+      {/* Kleines weißes Dreieck unten links */}
+      <polygon points="0,1006 200,1006 0,900" fill="#ffffff" opacity="0.10" />
+    </svg>
+  )
+}
 
 export default function LoginScreen() {
   const { signIn } = useAuthContext()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
-  const [error, setError] = useState<string | null>(null)
+  const [showPw, setShowPw] = useState(false)
+  const [remember, setRemember] = useState(false)
+  const [touchedEmail, setTouchedEmail] = useState(false)
+  const [serverError, setServerError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
-  function errorText(msg: string): string {
-    if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials'))
-      return 'E-Mail oder Passwort ist falsch.'
-    if (msg.includes('Email not confirmed'))
-      return 'Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.'
-    return msg
-  }
+  const emailOk = EMAIL_RE.test(email.trim())
+  const emailError = touchedEmail && email.length > 0 && !emailOk
+  const formOk = emailOk && password.length >= 1
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
-    setError(null)
+    if (!formOk) return
+    setServerError(null)
     setLoading(true)
     const err = await signIn(email, password)
     setLoading(false)
-    if (err) setError(errorText(err.message))
+    if (err) {
+      const msg = err.message
+      if (msg.includes('Invalid login credentials') || msg.includes('invalid_credentials'))
+        setServerError('E-Mail oder Passwort ist falsch.')
+      else if (msg.includes('Email not confirmed'))
+        setServerError('Bitte bestätigen Sie zuerst Ihre E-Mail-Adresse.')
+      else setServerError(msg)
+    }
   }
 
   return (
-    <AuthBackground>
+    <div style={{
+      minHeight: '100vh',
+      display: 'grid',
+      gridTemplateColumns: '1fr 560px',
+      fontFamily: "'Inter', system-ui, sans-serif",
+      WebkitFontSmoothing: 'antialiased',
+    }}>
+      {/* ── Linke Marken-Spalte ── */}
       <div style={{
-        background: '#fff',
-        borderRadius: '20px',
-        boxShadow: '0 40px 120px rgba(0,0,0,.45)',
+        position: 'relative',
+        background: '#12142a',
         overflow: 'hidden',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        padding: '56px 64px',
       }}>
         {/* Logo */}
-        <div style={{
-          background: 'var(--color-primary)',
-          padding: '24px 36px',
-          display: 'flex',
-          alignItems: 'center',
-          gap: '1px',
-        }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '1px', zIndex: 1 }}>
           <span style={{
-            background: 'var(--color-accent)',
-            borderRadius: '50%',
-            width: '38px', height: '38px',
+            background: '#f6c945', borderRadius: '50%',
+            width: '36px', height: '36px',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 400, fontSize: '.90rem', color: 'var(--color-primary)', flexShrink: 0,
+            fontWeight: 400, fontSize: '.88rem', color: '#12142a', flexShrink: 0, marginRight: '2px',
           }}>immo</span>
-          <span style={{ fontSize: '.90rem', fontWeight: 400, color: '#fff', letterSpacing: '-.01em' }}>logy</span>
+          <span style={{ fontSize: '1.1rem', fontWeight: 400, color: '#fff', letterSpacing: '-.01em' }}>logy</span>
         </div>
 
-        {/* Form */}
-        <div style={{ padding: '28px 36px 32px' }}>
-          <div style={{ fontSize: '18px', fontWeight: 700, color: 'var(--color-primary)', marginBottom: '20px' }}>
-            Anmelden
-          </div>
-          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
-            <label className="es-label">
+        {/* Headline — ausgerichtet an der Formular-Oberkante */}
+        <div style={{
+          position: 'absolute',
+          left: '64px', right: '64px',
+          top: 'max(140px, calc(50% - 237px))',
+          maxWidth: '560px',
+          zIndex: 1,
+        }}>
+          <h1 style={{
+            fontSize: 'clamp(40px, 4.5vw, 62px)',
+            fontWeight: 800,
+            color: '#ffffff',
+            letterSpacing: '-.03em',
+            lineHeight: 1,
+            margin: '0 0 20px',
+          }}>Willkommen!</h1>
+          <p style={{
+            fontSize: '19px',
+            color: '#a6abc4',
+            lineHeight: 1.6,
+            margin: 0,
+          }}>
+            Bereit für kluge Entscheidungen und<br />erfolgreiche Planungen?
+          </p>
+        </div>
+
+        {/* Markengrafik am unteren Rand */}
+        <div style={{ position: 'absolute', left: 0, bottom: 0, width: '100%', zIndex: 0 }}>
+          <LoginGrafik />
+        </div>
+
+        <div />
+      </div>
+
+      {/* ── Rechte Anmelde-Spalte ── */}
+      <div style={{
+        background: '#ffffff',
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'center',
+        padding: '56px 72px',
+      }}>
+        <div style={{ width: '100%', maxWidth: '400px', margin: '0 auto' }}>
+
+          <h2 style={{
+            fontSize: '28px', fontWeight: 800, color: '#12142a',
+            letterSpacing: '-.02em', margin: '0 0 6px',
+          }}>Anmelden</h2>
+          <p style={{ fontSize: '14.5px', color: '#6b7180', margin: '0 0 32px' }}>
+            Melden Sie sich mit Ihrem Firmenkonto an.
+          </p>
+
+          <form onSubmit={handleSubmit} style={{ display: 'flex', flexDirection: 'column', gap: '0' }}>
+
+            {/* E-Mail */}
+            <label style={{
+              display: 'flex', flexDirection: 'column', gap: '7px',
+              fontSize: '13.5px', fontWeight: 600, color: '#12142a', marginBottom: '18px',
+            }}>
               E-Mail
               <input
-                className="es-input"
                 type="email"
                 value={email}
-                onChange={e => setEmail(e.target.value)}
+                onChange={e => { setEmail(e.target.value); setTouchedEmail(true) }}
+                onBlur={() => setTouchedEmail(true)}
                 placeholder="name@unternehmen.de"
-                required
                 autoComplete="email"
-                style={{ marginTop: '6px' }}
+                style={{
+                  border: `1.5px solid ${emailError ? '#c23b3b' : '#d8dae3'}`,
+                  borderRadius: '10px', padding: '13px 15px',
+                  fontFamily: 'inherit', fontSize: '15px', color: '#12142a',
+                  outline: 'none', background: '#ffffff',
+                }}
+                onFocus={e => {
+                  e.target.style.border = '1.5px solid #f6c945'
+                  e.target.style.boxShadow = '0 0 0 3px rgba(246,201,69,.18)'
+                }}
+                onBlur={e => {
+                  e.target.style.border = `1.5px solid ${emailError ? '#c23b3b' : '#d8dae3'}`
+                  e.target.style.boxShadow = 'none'
+                  setTouchedEmail(true)
+                }}
               />
+              {emailError && (
+                <span style={{ fontSize: '12.5px', fontWeight: 500, color: '#c23b3b' }}>
+                  Bitte eine gültige E-Mail-Adresse eingeben.
+                </span>
+              )}
             </label>
-            <label className="es-label">
+
+            {/* Passwort */}
+            <label style={{
+              display: 'flex', flexDirection: 'column', gap: '7px',
+              fontSize: '13.5px', fontWeight: 600, color: '#12142a', marginBottom: '10px',
+            }}>
               Passwort
-              <input
-                className="es-input"
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="Passwort eingeben"
-                required
-                autoComplete="current-password"
-                style={{ marginTop: '6px' }}
-              />
+              <div style={{ position: 'relative', display: 'flex' }}>
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Passwort eingeben"
+                  autoComplete="current-password"
+                  style={{
+                    flex: 1, border: '1.5px solid #d8dae3', borderRadius: '10px',
+                    padding: '13px 56px 13px 15px',
+                    fontFamily: 'inherit', fontSize: '15px', color: '#12142a',
+                    outline: 'none', background: '#ffffff',
+                  }}
+                  onFocus={e => {
+                    e.target.style.border = '1.5px solid #f6c945'
+                    e.target.style.boxShadow = '0 0 0 3px rgba(246,201,69,.18)'
+                  }}
+                  onBlur={e => {
+                    e.target.style.border = '1.5px solid #d8dae3'
+                    e.target.style.boxShadow = 'none'
+                  }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(v => !v)}
+                  title={showPw ? 'Passwort verbergen' : 'Passwort anzeigen'}
+                  style={{
+                    position: 'absolute', right: '6px', top: '50%',
+                    transform: 'translateY(-50%)',
+                    border: 0, background: 'none', cursor: 'pointer',
+                    fontFamily: 'inherit', fontSize: '12.5px', fontWeight: 600,
+                    color: '#6b7180', padding: '8px 10px', borderRadius: '8px',
+                    transition: 'background .12s, color .12s',
+                  }}
+                  onMouseEnter={e => {
+                    (e.target as HTMLElement).style.background = '#f2f3f7';
+                    (e.target as HTMLElement).style.color = '#12142a'
+                  }}
+                  onMouseLeave={e => {
+                    (e.target as HTMLElement).style.background = 'none';
+                    (e.target as HTMLElement).style.color = '#6b7180'
+                  }}
+                >
+                  {showPw ? 'Verbergen' : 'Anzeigen'}
+                </button>
+              </div>
             </label>
-            {error && (
+
+            {/* Angemeldet bleiben + Passwort vergessen */}
+            <div style={{
+              display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+              marginBottom: '26px',
+            }}>
+              <label
+                onClick={() => setRemember(v => !v)}
+                style={{
+                  display: 'flex', alignItems: 'center', gap: '9px',
+                  fontSize: '13.5px', color: '#4a4f60', cursor: 'pointer', userSelect: 'none',
+                }}
+              >
+                <span style={{
+                  width: '19px', height: '19px', flexShrink: 0, borderRadius: '5px',
+                  border: `1.5px solid ${remember ? '#f6c945' : '#c6c9d4'}`,
+                  background: remember ? '#f6c945' : '#ffffff',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center',
+                  color: '#12142a', fontSize: '12px', fontWeight: 700,
+                  transition: 'background .12s, border-color .12s',
+                }}>
+                  {remember ? '✓' : ''}
+                </span>
+                Angemeldet bleiben
+              </label>
+              <a href="#" style={{ fontSize: '13.5px', fontWeight: 600, color: '#2f6bd6', textDecoration: 'none' }}>
+                Passwort vergessen?
+              </a>
+            </div>
+
+            {/* Server-Fehlermeldung */}
+            {serverError && (
               <div style={{
                 background: '#fdeae6', border: '1px solid #f5c9be',
                 borderRadius: '8px', padding: '10px 14px',
-                fontSize: '13.5px', color: '#c0392b', lineHeight: 1.5,
+                fontSize: '13.5px', color: '#c0392b', lineHeight: 1.5, marginBottom: '16px',
               }}>
-                {error}
+                {serverError}
               </div>
             )}
+
+            {/* CTA */}
             <button
               type="submit"
-              disabled={loading}
+              disabled={!formOk || loading}
               style={{
-                border: 0,
-                background: loading ? '#eceef4' : 'var(--color-accent)',
-                color: loading ? '#9aa0af' : 'var(--color-primary)',
-                fontFamily: 'inherit', fontSize: '15px', fontWeight: 700,
-                padding: '14px', borderRadius: '10px',
-                cursor: loading ? 'default' : 'pointer',
-                marginTop: '4px',
-                boxShadow: loading ? 'none' : '0 8px 24px rgba(242,213,81,.3)',
+                width: '100%', border: 0,
+                cursor: formOk && !loading ? 'pointer' : 'default',
+                fontFamily: 'inherit',
+                background: formOk && !loading ? '#f6c945' : '#eceef4',
+                color: formOk && !loading ? '#12142a' : '#9aa0af',
+                fontSize: '16px', fontWeight: 700,
+                padding: '15px 0', borderRadius: '12px',
+                boxShadow: formOk && !loading ? '0 8px 30px rgba(246,201,69,.3)' : 'none',
                 transition: 'background .15s, box-shadow .15s',
               }}
+              onMouseEnter={e => { if (formOk && !loading) (e.target as HTMLElement).style.background = '#ffd75e' }}
+              onMouseLeave={e => { if (formOk && !loading) (e.target as HTMLElement).style.background = '#f6c945' }}
             >
               {loading ? 'Bitte warten…' : 'Anmelden'}
             </button>
+
+            {/* Vertrauenszeile */}
+            <div style={{
+              display: 'flex', alignItems: 'center', gap: '8px', justifyContent: 'center',
+              marginTop: '22px', fontSize: '13px', color: '#9aa0af',
+            }}>
+              <span>🔒</span>Verschlüsselte Verbindung · DSGVO-konform
+            </div>
+
+            {/* Footer */}
+            <div style={{
+              borderTop: '1px solid #ececec', marginTop: '30px', paddingTop: '22px',
+              textAlign: 'center', fontSize: '14px', color: '#6b7180',
+            }}>
+              Noch kein Zugang?{' '}
+              <a href="#" style={{ fontWeight: 600, color: '#2f6bd6', textDecoration: 'none' }}>
+                Demo buchen
+              </a>
+            </div>
           </form>
         </div>
       </div>
-    </AuthBackground>
+    </div>
   )
 }
