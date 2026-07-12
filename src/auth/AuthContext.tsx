@@ -9,6 +9,7 @@ interface AuthCtx {
   signIn: (email: string, password: string) => Promise<AuthError | null>
   signOut: () => Promise<void>
   updatePassword: (newPassword: string) => Promise<AuthError | null>
+  resetPassword: (email: string) => Promise<AuthError | null>
 }
 
 const AuthContext = createContext<AuthCtx | null>(null)
@@ -56,14 +57,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   async function updatePassword(newPassword: string): Promise<AuthError | null> {
     const { error } = await supabase.auth.updateUser({ password: newPassword })
     if (!error) {
-      // Metadaten-Flag löschen
       await supabase.auth.updateUser({ data: { mustSetPassword: false } })
     }
     return error
   }
 
+  async function resetPassword(email: string): Promise<AuthError | null> {
+    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/?type=recovery`,
+    })
+    return error
+  }
+
   return (
-    <AuthContext.Provider value={{ session, loading, mustSetPassword, signIn, signOut, updatePassword }}>
+    <AuthContext.Provider value={{ session, loading, mustSetPassword, signIn, signOut, updatePassword, resetPassword }}>
       {children}
     </AuthContext.Provider>
   )

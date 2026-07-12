@@ -1,6 +1,7 @@
 import React, { useState, FormEvent } from 'react'
 import { useAuthContext } from '../auth/AuthContext'
 import { DemoBuchenModal } from '../components/DemoBuchenModal'
+import ForgotPasswordScreen from './ForgotPasswordScreen'
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
@@ -26,6 +27,9 @@ export default function LoginScreen() {
   const [serverError, setServerError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
   const [demoOpen, setDemoOpen] = useState(false)
+  const [showForgot, setShowForgot] = useState(false)
+
+  if (showForgot) return <ForgotPasswordScreen onBack={() => setShowForgot(false)} />
 
   const emailOk = EMAIL_RE.test(email.trim())
   const emailError = touchedEmail && email.length > 0 && !emailOk
@@ -261,7 +265,11 @@ export default function LoginScreen() {
                 </span>
                 Angemeldet bleiben
               </label>
-              <a href="#" style={{ fontSize: '13.5px', fontWeight: 600, color: '#2f6bd6', textDecoration: 'none' }}>
+              <a
+                href="#"
+                onClick={e => { e.preventDefault(); setShowForgot(true) }}
+                style={{ fontSize: '13.5px', fontWeight: 600, color: '#2f6bd6', textDecoration: 'none' }}
+              >
                 Passwort vergessen?
               </a>
             </div>
