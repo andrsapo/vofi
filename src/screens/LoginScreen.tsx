@@ -65,14 +65,29 @@ export default function LoginScreen() {
         padding: '56px 64px',
       }}>
         {/* Logo */}
-        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '1px', zIndex: 1 }}>
+        <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '0', zIndex: 1 }}>
           <span style={{
-            background: '#f6c945', borderRadius: '50%',
-            width: '36px', height: '36px',
+            background: '#f6c945',
+            borderRadius: '50%',
+            width: '38px', height: '38px',
+            minWidth: '38px', minHeight: '38px',
             display: 'inline-flex', alignItems: 'center', justifyContent: 'center',
-            fontWeight: 400, fontSize: '.88rem', color: '#12142a', flexShrink: 0, marginRight: '2px',
+            fontFamily: "'Nunito', 'Quicksand', 'Segoe UI', system-ui, sans-serif",
+            fontWeight: 500,
+            fontSize: '14px',
+            letterSpacing: '-0.3px',
+            color: '#12142a',
+            flexShrink: 0,
           }}>immo</span>
-          <span style={{ fontSize: '1.1rem', fontWeight: 400, color: '#fff', letterSpacing: '-.01em' }}>logy</span>
+          <span style={{
+            fontFamily: "'Nunito', 'Quicksand', 'Segoe UI', system-ui, sans-serif",
+            fontSize: '14px',
+            fontWeight: 500,
+            letterSpacing: '-0.3px',
+            color: '#ffffff',
+            marginLeft: '2px',
+            whiteSpace: 'nowrap',
+          }}>logy</span>
         </div>
 
         {/* Headline — ausgerichtet an der Formular-Oberkante */}
