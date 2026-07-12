@@ -1,5 +1,6 @@
 import React, { useState, FormEvent } from 'react'
 import { useAuthContext } from '../auth/AuthContext'
+import { DemoBuchenModal } from '../components/DemoBuchenModal'
 
 const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
 
@@ -24,6 +25,7 @@ export default function LoginScreen() {
   const [touchedEmail, setTouchedEmail] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
+  const [demoOpen, setDemoOpen] = useState(false)
 
   const emailOk = EMAIL_RE.test(email.trim())
   const emailError = touchedEmail && email.length > 0 && !emailOk
@@ -310,13 +312,19 @@ export default function LoginScreen() {
               textAlign: 'center', fontSize: '14px', color: '#6b7180',
             }}>
               Noch kein Zugang?{' '}
-              <a href="#" style={{ fontWeight: 600, color: '#2f6bd6', textDecoration: 'none' }}>
+              <a
+                href="#"
+                onClick={e => { e.preventDefault(); setDemoOpen(true) }}
+                style={{ fontWeight: 600, color: '#2f6bd6', textDecoration: 'none' }}
+              >
                 Demo buchen
               </a>
             </div>
           </form>
         </div>
       </div>
+
+      <DemoBuchenModal open={demoOpen} onClose={() => setDemoOpen(false)} />
     </div>
   )
 }
