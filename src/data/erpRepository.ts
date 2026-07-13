@@ -202,21 +202,44 @@ class MockErpRepository implements ErpRepository {
       MOCK_PERSONEN[idx] = person
       speichereInStorage(MOCK_PERSONEN)
       window.dispatchEvent(new CustomEvent('erpchange'))
+      import('./supabaseRepository').then(({ upsertPerson }) => upsertPerson(person)).catch(() => {})
     }
   }
   loeschePerson(id: string): void {
     MOCK_PERSONEN = MOCK_PERSONEN.filter((p) => p.id !== id)
     speichereInStorage(MOCK_PERSONEN)
     window.dispatchEvent(new CustomEvent('erpchange'))
+    import('./supabaseRepository').then(({ deletePersonDB }) => deletePersonDB(id)).catch(() => {})
   }
   fuegePersonHinzu(person: Person): void {
     MOCK_PERSONEN.push(person)
     speichereInStorage(MOCK_PERSONEN)
     window.dispatchEvent(new CustomEvent('erpchange'))
+    import('./supabaseRepository').then(({ upsertPerson }) => upsertPerson(person)).catch(() => {})
   }
 }
 
 export const erpRepository: ErpRepository = new MockErpRepository()
+
+/** Lädt Personen aus der DB und synchronisiert mit dem In-Memory-Cache.
+ *  Wird beim App-Start in BootstrapLayer aufgerufen. */
+export async function ladeUndSyncPersonen(): Promise<void> {
+  try {
+    const { ladePersonenDB } = await import('./supabaseRepository')
+    const dbPersonen = await ladePersonenDB()
+    if (dbPersonen.length > 0) {
+      MOCK_PERSONEN = dbPersonen
+      speichereInStorage(MOCK_PERSONEN)
+      window.dispatchEvent(new CustomEvent('erpchange'))
+    } else {
+      // DB leer → lokale Personen in DB hochladen
+      const { upsertPerson } = await import('./supabaseRepository')
+      await Promise.all(MOCK_PERSONEN.map(upsertPerson))
+    }
+  } catch (e) {
+    console.warn('[erpRepository] DB-Sync fehlgeschlagen, verwende localStorage:', e)
+  }
+}
 
 /** Stellt sicher, dass ein Supabase-Nutzer als Person in localStorage existiert.
  *  Wird einmalig nach dem Login aufgerufen. */

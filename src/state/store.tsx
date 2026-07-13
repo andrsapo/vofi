@@ -130,6 +130,80 @@ function speichereState(state: AppState): void {
   }
 }
 
+/** Schreibt eine einzelne Mutation fire-and-forget in die DB.
+ *  Fehler werden geloggt aber nie an die UI weitergegeben. */
+function syncMutationZuDB(prev: AppState, next: AppState): void {
+  import('../data/supabaseRepository').then(
+    ({
+      upsertProjekt, deleteProjekt,
+      upsertSzenario, deleteSzenario, upsertSzenarioDaten,
+      upsertKommentar, deleteKommentar, deleteKommentareVonProjekt,
+      upsertBericht, deleteBericht, deleteBerichteVonProjekt,
+    }) => {
+      // Projekte: neu oder geändert
+      for (const p of next.projekte) {
+        const alt = prev.projekte.find((x) => x.id === p.id)
+        if (!alt || JSON.stringify(alt) !== JSON.stringify(p) || JSON.stringify(prev.objektIst[p.id]) !== JSON.stringify(next.objektIst[p.id])) {
+          upsertProjekt(p, next.objektIst[p.id] ?? {}).catch(console.error)
+        }
+      }
+      // Projekte: gelöscht
+      for (const p of prev.projekte) {
+        if (!next.projekte.find((x) => x.id === p.id)) {
+          deleteProjekt(p.id).catch(console.error)
+        }
+      }
+      // Szenarien: neu oder geändert
+      for (const s of next.szenarien) {
+        const alt = prev.szenarien.find((x) => x.id === s.id)
+        if (!alt || JSON.stringify(alt) !== JSON.stringify(s) || JSON.stringify(prev.szenarioDaten[s.id]) !== JSON.stringify(next.szenarioDaten[s.id])) {
+          upsertSzenario(s, next.szenarioDaten[s.id] ?? ({} as any)).catch(console.error)
+        }
+      }
+      // SzenarioDaten ohne neues Szenario (z.B. aendereSzenarioDaten)
+      for (const id of Object.keys(next.szenarioDaten)) {
+        if (next.szenarien.find((s) => s.id === id) && JSON.stringify(prev.szenarioDaten[id]) !== JSON.stringify(next.szenarioDaten[id])) {
+          if (prev.szenarien.find((s) => s.id === id)) {
+            upsertSzenarioDaten(id, next.szenarioDaten[id]).catch(console.error)
+          }
+        }
+      }
+      // Szenarien: gelöscht
+      for (const s of prev.szenarien) {
+        if (!next.szenarien.find((x) => x.id === s.id)) {
+          deleteSzenario(s.id).catch(console.error)
+        }
+      }
+      // Kommentare: neu oder geändert
+      for (const k of next.kommentare) {
+        const alt = prev.kommentare.find((x) => x.id === k.id)
+        if (!alt || JSON.stringify(alt) !== JSON.stringify(k)) {
+          upsertKommentar(k).catch(console.error)
+        }
+      }
+      // Kommentare: gelöscht
+      for (const k of prev.kommentare) {
+        if (!next.kommentare.find((x) => x.id === k.id)) {
+          deleteKommentar(k.id).catch(console.error)
+        }
+      }
+      // Berichte: neu oder geändert
+      for (const b of next.berichte) {
+        const alt = prev.berichte.find((x) => x.id === b.id)
+        if (!alt || JSON.stringify(alt) !== JSON.stringify(b)) {
+          upsertBericht(b).catch(console.error)
+        }
+      }
+      // Berichte: gelöscht
+      for (const b of prev.berichte) {
+        if (!next.berichte.find((x) => x.id === b.id)) {
+          deleteBericht(b.id).catch(console.error)
+        }
+      }
+    }
+  ).catch(console.error)
+}
+
 export class Store {
   state: AppState
   private version = 0
@@ -147,12 +221,69 @@ export class Store {
   getVersion = (): number => this.version
 
   mutate(fn: (state: AppState) => void): void {
+    const prev = this.state
+    // Snapshot für DB-Diff (shallow copy der Arrays reicht für Änderungserkennung)
+    const prevSnap: AppState = {
+      ...prev,
+      projekte: [...prev.projekte],
+      szenarien: [...prev.szenarien],
+      kommentare: [...prev.kommentare],
+      berichte: [...prev.berichte],
+      objektIst: { ...prev.objektIst },
+      szenarioDaten: { ...prev.szenarioDaten },
+    }
     fn(this.state)
     this.version += 1
-    // Nach jeder Mutation persistieren – automatische Speicherung deckt alle
-    // Änderungen ab (Titel geändert, Kommentar, Status, Szenario ergänzt …).
     speichereState(this.state)
+    syncMutationZuDB(prevSnap, this.state)
     this.listeners.forEach((l) => l())
+  }
+
+  /** Lädt den aktuellen Stand aus der Supabase-DB und überschreibt localStorage.
+   *  Wird einmalig beim App-Start aufgerufen (nach dem Rendern der UI). */
+  async ladeVonServer(): Promise<void> {
+    try {
+      const { ladeAppDaten, migriereLokaldaten } = await import('../data/supabaseRepository')
+      const { ladePersonen: ladePersonenLokal } = await import('../data/erpRepository')
+      const dbDaten = await ladeAppDaten()
+
+      if (!dbDaten) {
+        // DB leer → bestehende localStorage-Daten migrieren
+        const lokalerState = ladePersistiertenState(this.state.aktuellerNutzerId)
+        if (lokalerState && lokalerState.projekte.length > 0) {
+          console.info('[store] Migriere lokale Daten in die DB…')
+          await migriereLokaldaten(
+            {
+              projekte: lokalerState.projekte,
+              objektIst: lokalerState.objektIst,
+              szenarien: lokalerState.szenarien,
+              szenarioDaten: lokalerState.szenarioDaten,
+              kommentare: lokalerState.kommentare,
+              berichte: lokalerState.berichte,
+            },
+            ladePersonenLokal()
+          )
+          console.info('[store] Migration abgeschlossen.')
+        }
+        return
+      }
+
+      // DB hat Daten → State aktualisieren
+      this.state = {
+        ...this.state,
+        projekte:      dbDaten.projekte,
+        objektIst:     dbDaten.objektIst,
+        szenarien:     dbDaten.szenarien,
+        szenarioDaten: dbDaten.szenarioDaten,
+        kommentare:    dbDaten.kommentare,
+        berichte:      dbDaten.berichte,
+      }
+      speichereState(this.state)
+      this.version += 1
+      this.listeners.forEach((l) => l())
+    } catch (e) {
+      console.warn('[store] ladeVonServer fehlgeschlagen:', e)
+    }
   }
 
   /** Kompletten persistierten State löschen (z. B. für einen Reset-Button). */

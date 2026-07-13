@@ -1,9 +1,9 @@
 import React, { useEffect } from 'react'
 import ReactDOM from 'react-dom/client'
 import App from './App'
-import { StoreProvider } from './state/store'
+import { StoreProvider, useStore } from './state/store'
 import { AuthProvider, useAuthContext } from './auth/AuthContext'
-import { sicherstelleNutzer } from './data/erpRepository'
+import { sicherstelleNutzer, ladeUndSyncPersonen } from './data/erpRepository'
 import LoginScreen from './screens/LoginScreen'
 import SetPasswordScreen from './screens/SetPasswordScreen'
 import './theme/tokens.css'
@@ -33,17 +33,22 @@ function AppLadebildschirm() {
 
 function BootstrapLayer({ children }: { children: React.ReactNode }) {
   const { session } = useAuthContext()
+  const store = useStore()
+
   useEffect(() => {
-    if (session?.user) {
-      const meta = session.user.user_metadata ?? {}
-      sicherstelleNutzer({
-        id: session.user.id,
-        email: session.user.email ?? '',
-        name: meta.name,
-        rolle: meta.rolle,
-      })
-    }
+    if (!session?.user) return
+    const user = session.user
+    const meta = user.user_metadata ?? {}
+    sicherstelleNutzer({
+      id: user.id,
+      email: user.email ?? '',
+      name: meta.name,
+      rolle: meta.rolle,
+    })
+    // Personen aus DB laden und dann App-Daten vom Server holen
+    ladeUndSyncPersonen().then(() => store.ladeVonServer())
   }, [session?.user?.id])
+
   return <>{children}</>
 }
 
