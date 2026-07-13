@@ -287,12 +287,20 @@ export class Store {
         return
       }
 
+      // DB hat Daten → State zusammenführen
+      // Lokale szenarioDaten füllen Lücken (FK-Timing: upsert läuft async)
+      const mergedSzenarioDaten: Record<string, SzenarioDaten> = { ...this.state.szenarioDaten }
+      for (const [id, dbEintrag] of Object.entries(dbDaten.szenarioDaten)) {
+        if (dbEintrag && Object.keys(dbEintrag).length > 0) {
+          mergedSzenarioDaten[id] = dbEintrag
+        }
+      }
       this.state = {
         ...this.state,
         projekte:      dbDaten.projekte,
-        objektIst:     dbDaten.objektIst,
+        objektIst:     { ...this.state.objektIst, ...dbDaten.objektIst },
         szenarien:     dbDaten.szenarien,
-        szenarioDaten: dbDaten.szenarioDaten,
+        szenarioDaten: mergedSzenarioDaten,
         kommentare:    dbDaten.kommentare,
         berichte:      dbDaten.berichte,
       }
