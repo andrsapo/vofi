@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Person } from '../types'
 import { erpRepository } from '../data/erpRepository'
 import { supabase } from '../lib/supabaseClient'
+import { uploadBild } from '../data/supabaseRepository'
 import { Avatar } from './ui'
 import { IconKamera } from './icons'
 
@@ -114,9 +115,16 @@ export function MeinProfilModal({ nutzerId, onClose }: { nutzerId: string; onClo
   function handleBild(e: React.ChangeEvent<HTMLInputElement>) {
     const datei = e.target.files?.[0]
     if (!datei) return
+    // Vorschau sofort anzeigen
     const reader = new FileReader()
     reader.onload = (ev) => set('avatarUrl', ev.target?.result as string)
     reader.readAsDataURL(datei)
+    // In Storage hochladen
+    const ext = datei.name.split('.').pop() ?? 'jpg'
+    const pfad = `avatare/${person.id}.${ext}`
+    uploadBild(datei, pfad).then((url) => {
+      if (url) set('avatarUrl', url)
+    })
     e.target.value = ''
   }
 

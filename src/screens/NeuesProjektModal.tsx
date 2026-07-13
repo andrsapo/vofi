@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react'
 import type { Investitionsart } from '../types'
 import { erpRepository } from '../data/erpRepository'
+import { uploadBild } from '../data/supabaseRepository'
 import { gespeicherteEinstellungen } from '../components/OrganisationseinstellungModal'
 import { useApp, useStore } from '../state/store'
 import { Avatar, Modal, Popover, ZahlenInput, ZugangOverlay } from '../components/ui'
@@ -47,6 +48,7 @@ export function NeuesProjektModal({
   const [zugang, setZugang] = useState<string[]>([app.aktuellerNutzerId])
   const [zugangEditorOffen, setZugangEditorOffen] = useState(false)
   const [titelbildUrl, setTitelbildUrl] = useState<string | undefined>(undefined)
+  const [titelbildDatei, setTitelbildDatei] = useState<File | undefined>(undefined)
   // Automatische Namensableitung aus Objekt + Typ (Folie: "Wilhelmplatz 3 - Sanierung").
   // Sobald der Anwender den Namen selbst bearbeitet, wird die Auto-Belegung dauerhaft deaktiviert.
   const [nameAutomatisch, setNameAutomatisch] = useState(true)
@@ -77,8 +79,16 @@ export function NeuesProjektModal({
     inflation >= 0 &&
     zugang.length > 0
 
-  const erstellen = () => {
+  const erstellen = async () => {
     if (!gueltig) return
+    // Bild zuerst in Storage hochladen, dann Projekt erstellen
+    let bildUrl = titelbildUrl
+    if (titelbildDatei) {
+      const ext = titelbildDatei.name.split('.').pop() ?? 'jpg'
+      const pfad = `titelbilder/${Date.now()}.${ext}`
+      const storageUrl = await uploadBild(titelbildDatei, pfad)
+      if (storageUrl) bildUrl = storageUrl
+    }
     store.erstelleProjekt({
       name: name.trim(),
       beschreibung,
@@ -88,7 +98,7 @@ export function NeuesProjektModal({
       betrachtungszeitraumJahre: zeitraum,
       inflationaereKostensteigerungProzent: inflation,
       zugangsberechtigteIds: zugang,
-      titelbildUrl,
+      titelbildUrl: bildUrl,
     })
   }
 
@@ -123,7 +133,10 @@ export function NeuesProjektModal({
             hidden
             onChange={(e) => {
               const datei = e.target.files?.[0]
-              if (datei) setTitelbildUrl(URL.createObjectURL(datei))
+              if (datei) {
+                setTitelbildDatei(datei)
+                setTitelbildUrl(URL.createObjectURL(datei))
+              }
             }}
           />
         </button>

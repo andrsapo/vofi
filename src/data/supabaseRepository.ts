@@ -67,10 +67,8 @@ export async function ladeAppDaten(): Promise<AppDaten | null> {
 // ── Projekte ─────────────────────────────────────────────────────────────────
 
 export async function upsertProjekt(p: Projekt, oi: ObjektIst): Promise<void> {
-  // titelbildUrl nicht in DB speichern (Data-URL zu groß für Supabase Row-Limit)
-  const { titelbildUrl: _, ...projektOhneBild } = p
   await Promise.all([
-    supabase.from('projekte').upsert({ id: p.id, data: projektOhneBild }),
+    supabase.from('projekte').upsert({ id: p.id, data: p }),
     supabase.from('objekt_ist').upsert({ projekt_id: p.id, data: oi }),
   ])
 }
@@ -140,7 +138,28 @@ export async function deletePersonDB(id: string): Promise<void> {
   await supabase.from('personen').delete().eq('id', id)
 }
 
-// ── Einmalige Migration aus localStorage ──────────────────────────────────────
+// ── Storage: Bilder ───────────────────────────────────────────────────────────
+
+const BUCKET = 'bilder'
+
+/** Lädt eine Datei in den Supabase Storage Bucket und gibt die öffentliche URL zurück. */
+export async function uploadBild(datei: File, pfad: string): Promise<string | null> {
+  const { error } = await supabase.storage.from(BUCKET).upload(pfad, datei, {
+    upsert: true,
+    contentType: datei.type,
+  })
+  if (error) {
+    console.error('[storage] Upload fehlgeschlagen:', error.message)
+    return null
+  }
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(pfad)
+  return data.publicUrl
+}
+
+/** Löscht eine Datei aus dem Storage Bucket. */
+export async function loescheBild(pfad: string): Promise<void> {
+  await supabase.storage.from(BUCKET).remove([pfad])
+}
 
 export async function migriereLokaldaten(daten: AppDaten, personen: Person[]): Promise<void> {
   // Projekte + ObjektIst

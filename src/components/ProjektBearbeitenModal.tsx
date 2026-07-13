@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import type { Projekt } from '../types'
 import { erpRepository } from '../data/erpRepository'
 import { useApp, useStore } from '../state/store'
+import { uploadBild } from '../data/supabaseRepository'
 import { Avatar, Modal, Popover, ZahlenInput, ZugangOverlay } from './ui'
 import { formatDatum } from '../utils/format'
 import { IconGebaeude } from './icons'
@@ -51,6 +52,7 @@ export function ProjektBearbeitenModal({ projekt, onClose }: { projekt: Projekt;
   const store = useStore()
   const app = useApp()
   const dateiInput = useRef<HTMLInputElement>(null)
+  const [titelbildDatei, setTitelbildDatei] = useState<File | undefined>(undefined)
   const [personen, setPersonen] = useState(() => erpRepository.ladePersonen())
   const objekte = erpRepository.ladeObjekte()
 
@@ -100,8 +102,16 @@ export function ProjektBearbeitenModal({ projekt, onClose }: { projekt: Projekt;
     return Object.keys(neuerFehler).length === 0
   }
 
-  const speichern = () => {
+  const speichern = async () => {
     if (!validiere()) return
+    let bildUrl = entwurf.titelbildUrl || null
+    if (titelbildDatei) {
+      const ext = titelbildDatei.name.split('.').pop() ?? 'jpg'
+      const pfad = `titelbilder/${projekt.id}.${ext}`
+      const storageUrl = await uploadBild(titelbildDatei, pfad)
+      if (storageUrl) bildUrl = storageUrl
+      setTitelbildDatei(undefined)
+    }
     store.aktualisiereProjekt(projekt.id, {
       name: entwurf.name.trim(),
       beschreibung: entwurf.beschreibung,
@@ -110,10 +120,9 @@ export function ProjektBearbeitenModal({ projekt, onClose }: { projekt: Projekt;
       betrachtungszeitraumJahre: entwurf.betrachtungszeitraumJahre,
       inflationaereKostensteigerungProzent: entwurf.inflationaereKostensteigerungProzent,
       zugangsberechtigteIds: entwurf.zugangsberechtigteIds,
-      titelbildUrl: entwurf.titelbildUrl || null,
+      titelbildUrl: bildUrl,
     })
-    // Modal bleibt offen – Snapshot auf neue Werte setzen, Speichern deaktiviert
-    setSnapshot({ ...entwurf, name: entwurf.name.trim() })
+    setSnapshot({ ...entwurf, name: entwurf.name.trim(), titelbildUrl: bildUrl ?? '' })
     setFehler({})
   }
 
@@ -132,6 +141,7 @@ export function ProjektBearbeitenModal({ projekt, onClose }: { projekt: Projekt;
   const handleBildAuswahl = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (!file) return
+    setTitelbildDatei(file)
     const reader = new FileReader()
     reader.onload = (evt) => {
       const result = evt.target?.result

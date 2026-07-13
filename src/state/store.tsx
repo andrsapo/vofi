@@ -228,15 +228,26 @@ export class Store {
 
   mutate(fn: (state: AppState) => void): void {
     const prev = this.state
-    // Snapshot für DB-Diff (shallow copy der Arrays reicht für Änderungserkennung)
+    // Snapshot für DB-Diff: objektIst und szenarioDaten tief klonen, da
+    // Mutationen (setzeObjektFeld, aendereSzenarioDaten) in-place arbeiten
+    // und ein flacher Klon dieselben Referenzen teilt – der Diff sieht sonst
+    // nie eine Änderung und schreibt nichts in die DB.
+    const prevObjektIstDeep: Record<string, ObjektIst> = {}
+    for (const [id, oi] of Object.entries(prev.objektIst)) {
+      prevObjektIstDeep[id] = JSON.parse(JSON.stringify(oi))
+    }
+    const prevSzenarioDatenDeep: Record<string, SzenarioDaten> = {}
+    for (const [id, sd] of Object.entries(prev.szenarioDaten)) {
+      prevSzenarioDatenDeep[id] = JSON.parse(JSON.stringify(sd))
+    }
     const prevSnap: AppState = {
       ...prev,
       projekte: [...prev.projekte],
       szenarien: [...prev.szenarien],
       kommentare: [...prev.kommentare],
       berichte: [...prev.berichte],
-      objektIst: { ...prev.objektIst },
-      szenarioDaten: { ...prev.szenarioDaten },
+      objektIst: prevObjektIstDeep,
+      szenarioDaten: prevSzenarioDatenDeep,
     }
     fn(this.state)
     this.version += 1
@@ -293,23 +304,12 @@ export class Store {
         return
       }
 
-      // Titelbilder aus localStorage wiederherstellen (werden nicht in DB gespeichert)
-      const lokalBilder: Record<string, string> = {}
-      for (const p of this.state.projekte) {
-        if (p.titelbildUrl) lokalBilder[p.id] = p.titelbildUrl
-      }
-      const mergedProjekte = dbDaten.projekte.map(p => ({
-        ...p,
-        titelbildUrl: lokalBilder[p.id] ?? p.titelbildUrl,
-      }))
+      // Titelbilder: Storage-URLs direkt aus DB übernehmen
+      // SzenarioDaten: DB-Stand übernehmen, leere Einträge mit Defaults reparieren
       const mergedSzenarioDaten: Record<string, SzenarioDaten> = { ...this.state.szenarioDaten }
       for (const [id, dbEintrag] of Object.entries(dbDaten.szenarioDaten)) {
-        if (dbEintrag && Object.keys(dbEintrag).length > 0) {
-          mergedSzenarioDaten[id] = dbEintrag
-        }
-        // leer → lokalen Stand behalten (wird unten ggf. mit Defaults befüllt)
+        if (dbEintrag && Object.keys(dbEintrag).length > 0) mergedSzenarioDaten[id] = dbEintrag
       }
-      // Szenarien ohne szenarioDaten mit Defaults befüllen und reparieren
       const { erzeugeLeereObjektdaten, erzeugeLeereErtraegeAufwendungen, erzeugeLeereFinanzierung } = await import('../data/defaults')
       const { upsertSzenarioDaten } = await import('../data/supabaseRepository')
       for (const s of dbDaten.szenarien) {
@@ -325,7 +325,7 @@ export class Store {
       }
       this.state = {
         ...this.state,
-        projekte:      mergedProjekte,
+        projekte:      dbDaten.projekte,
         objektIst:     { ...this.state.objektIst, ...dbDaten.objektIst },
         szenarien:     dbDaten.szenarien,
         szenarioDaten: mergedSzenarioDaten,

@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import type { Person, Rolle } from '../types'
 import { erpRepository } from '../data/erpRepository'
 import { supabase } from '../lib/supabaseClient'
+import { uploadBild } from '../data/supabaseRepository'
 import { useApp } from '../state/store'
 import { Avatar } from './ui'
 import { IconKamera, IconSchliessen } from './icons'
@@ -143,6 +144,7 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
   function handleBildUpload(e: React.ChangeEvent<HTMLInputElement>, fuerNeu = false) {
     const datei = e.target.files?.[0]
     if (!datei) return
+    // Vorschau sofort
     const reader = new FileReader()
     reader.onload = (ev) => {
       const url = ev.target?.result as string
@@ -150,6 +152,15 @@ export function UserManagementModal({ onClose }: { onClose: () => void }) {
       else aendere('avatarUrl', url)
     }
     reader.readAsDataURL(datei)
+    // In Storage hochladen
+    const personId = fuerNeu ? `neu-${Date.now()}` : (ausgewaehltId ?? 'unbekannt')
+    const ext = datei.name.split('.').pop() ?? 'jpg'
+    uploadBild(datei, `avatare/${personId}.${ext}`).then((url) => {
+      if (url) {
+        if (fuerNeu) aendereNeu('avatarUrl', url)
+        else aendere('avatarUrl', url)
+      }
+    })
     e.target.value = ''
   }
 
