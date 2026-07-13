@@ -104,25 +104,32 @@ export function ProjektBearbeitenModal({ projekt, onClose }: { projekt: Projekt;
 
   const speichern = async () => {
     if (!validiere()) return
-    let bildUrl = entwurf.titelbildUrl || null
-    if (titelbildDatei) {
-      const ext = titelbildDatei.name.split('.').pop() ?? 'jpg'
-      const pfad = `titelbilder/${projekt.id}.${ext}`
-      const storageUrl = await uploadBild(titelbildDatei, pfad)
+    // Alle Werte VOR dem async Upload sichern (React-State-Closure-Problem)
+    const aktuellerEntwurf = { ...entwurf }
+    let bildUrl: string | null = aktuellerEntwurf.titelbildUrl || null
+    const datei = titelbildDatei
+
+    if (datei) {
+      const ext = datei.name.split('.').pop() ?? 'jpg'
+      const storageUrl = await uploadBild(datei, `titelbilder/${projekt.id}.${ext}`)
       if (storageUrl) bildUrl = storageUrl
       setTitelbildDatei(undefined)
     }
+
     store.aktualisiereProjekt(projekt.id, {
-      name: entwurf.name.trim(),
-      beschreibung: entwurf.beschreibung,
-      typ: entwurf.typ,
-      objektId: entwurf.objektId || null,
-      betrachtungszeitraumJahre: entwurf.betrachtungszeitraumJahre,
-      inflationaereKostensteigerungProzent: entwurf.inflationaereKostensteigerungProzent,
-      zugangsberechtigteIds: entwurf.zugangsberechtigteIds,
+      name: aktuellerEntwurf.name.trim(),
+      beschreibung: aktuellerEntwurf.beschreibung,
+      typ: aktuellerEntwurf.typ,
+      objektId: aktuellerEntwurf.objektId || null,
+      betrachtungszeitraumJahre: aktuellerEntwurf.betrachtungszeitraumJahre,
+      inflationaereKostensteigerungProzent: aktuellerEntwurf.inflationaereKostensteigerungProzent,
+      zugangsberechtigteIds: aktuellerEntwurf.zugangsberechtigteIds,
       titelbildUrl: bildUrl,
     })
-    setSnapshot({ ...entwurf, name: entwurf.name.trim(), titelbildUrl: bildUrl ?? '' })
+    // Snapshot und Entwurf mit finaler bildUrl aktualisieren
+    const neuerSnapshot = { ...aktuellerEntwurf, name: aktuellerEntwurf.name.trim(), titelbildUrl: bildUrl ?? '' }
+    setSnapshot(neuerSnapshot)
+    setEntwurf(neuerSnapshot)
     setFehler({})
   }
 

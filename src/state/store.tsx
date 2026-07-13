@@ -304,16 +304,34 @@ export class Store {
         return
       }
 
-      // Titelbilder: Storage-URLs direkt aus DB übernehmen
-      // SzenarioDaten: DB-Stand übernehmen, leere Einträge mit Defaults reparieren
-      const mergedSzenarioDaten: Record<string, SzenarioDaten> = { ...this.state.szenarioDaten }
-      for (const [id, dbEintrag] of Object.entries(dbDaten.szenarioDaten)) {
-        if (dbEintrag && Object.keys(dbEintrag).length > 0) mergedSzenarioDaten[id] = dbEintrag
-      }
-      const { erzeugeLeereObjektdaten, erzeugeLeereErtraegeAufwendungen, erzeugeLeereFinanzierung } = await import('../data/defaults')
-      const { upsertSzenarioDaten } = await import('../data/supabaseRepository')
+      const {
+        erzeugeLeereObjektdaten,
+        erzeugeLeereErtraegeAufwendungen,
+        erzeugeLeereFinanzierung,
+      } = await import('../data/defaults')
+      const { upsertSzenarioDaten, upsertProjekt } = await import('../data/supabaseRepository')
+
+      // szenarioDaten zusammenführen:
+      // DB ist Source-of-Truth für vollständige Einträge.
+      // Fehlt ein Eintrag in der DB (FK-Race bei Erstellung), lokalen Stand
+      // hochschieben – so sehen auch andere Nutzer die Daten.
+      const istVollstaendig = (d: SzenarioDaten | undefined | null): boolean =>
+        !!(d && d.objektdaten && d.ertraegeAufwendungen && d.finanzierung)
+
+      const mergedSzenarioDaten: Record<string, SzenarioDaten> = {}
       for (const s of dbDaten.szenarien) {
-        if (!mergedSzenarioDaten[s.id] || Object.keys(mergedSzenarioDaten[s.id]).length === 0) {
+        const dbEintrag = dbDaten.szenarioDaten[s.id]
+        const lokalerEintrag = this.state.szenarioDaten[s.id]
+
+        if (istVollstaendig(dbEintrag)) {
+          // DB hat vollständige Daten → verwenden
+          mergedSzenarioDaten[s.id] = dbEintrag!
+        } else if (istVollstaendig(lokalerEintrag)) {
+          // DB unvollständig/leer, aber lokal vorhanden → in DB schreiben und verwenden
+          mergedSzenarioDaten[s.id] = lokalerEintrag!
+          upsertSzenarioDaten(s.id, lokalerEintrag!).catch(console.error)
+        } else {
+          // Weder DB noch lokal vollständig → leere Defaults als Fallback
           const repariert: SzenarioDaten = {
             objektdaten: erzeugeLeereObjektdaten(),
             ertraegeAufwendungen: erzeugeLeereErtraegeAufwendungen(),
@@ -323,10 +341,24 @@ export class Store {
           upsertSzenarioDaten(s.id, repariert).catch(console.error)
         }
       }
+
+      // objektIst zusammenführen:
+      // DB hat Vorrang für vollständige Einträge.
+      // Fehlt ein Eintrag in der DB, lokalen Stand hochschieben.
+      const mergedObjektIst: Record<string, ObjektIst> = { ...dbDaten.objektIst }
+      for (const p of dbDaten.projekte) {
+        const dbOI = dbDaten.objektIst[p.id]
+        const lokalOI = this.state.objektIst[p.id]
+        if ((!dbOI || Object.keys(dbOI).length === 0) && lokalOI && Object.keys(lokalOI).length > 0) {
+          mergedObjektIst[p.id] = lokalOI
+          upsertProjekt(p, lokalOI).catch(console.error)
+        }
+      }
+
       this.state = {
         ...this.state,
         projekte:      dbDaten.projekte,
-        objektIst:     { ...this.state.objektIst, ...dbDaten.objektIst },
+        objektIst:     mergedObjektIst,
         szenarien:     dbDaten.szenarien,
         szenarioDaten: mergedSzenarioDaten,
         kommentare:    dbDaten.kommentare,
