@@ -245,36 +245,21 @@ export class Store {
       const { ladePersonen: ladePersonenLokal } = await import('../data/erpRepository')
       const dbDaten = await ladeAppDaten()
 
-      console.info('[store] ladeVonServer: dbDaten=', dbDaten ? `${dbDaten.projekte.length} Projekte` : 'null (DB leer)')
-
       if (!dbDaten) {
-        // DB leer → bestehende localStorage-Daten migrieren
-        // Wir lesen den raw localStorage direkt aus, unabhängig von aktuellerNutzerId
-        const rawKeys = ['immology.appState']
-        let lokalerState: AppState | null = null
-
-        // Versuche zuerst mit aktueller nutzerId
-        lokalerState = ladePersistiertenState(this.state.aktuellerNutzerId)
-
-        // Falls leer: versuche den Raw-JSON direkt (ignoriere Versions-/ID-Check)
+        let lokalerState: AppState | null = ladePersistiertenState(this.state.aktuellerNutzerId)
         if (!lokalerState || lokalerState.projekte.length === 0) {
           try {
             const raw = window.localStorage.getItem('immology.appState')
             if (raw) {
               const parsed = JSON.parse(raw)
               if (parsed?.data?.projekte?.length > 0) {
-                console.info('[store] Migriere localStorage-Daten (ignoriere nutzerId-Check), Projekte:', parsed.data.projekte.length)
                 lokalerState = { ...initialState(this.state.aktuellerNutzerId), ...parsed.data, aktuellerNutzerId: this.state.aktuellerNutzerId, ui: initialState(this.state.aktuellerNutzerId).ui, route: { view: 'dashboard' } }
               }
             }
           } catch { /* ignore */ }
         }
 
-        console.info('[store] Lokale Projekte:', lokalerState?.projekte?.length ?? 0, 'Personen:', ladePersonenLokal().length)
-
         if (lokalerState && lokalerState.projekte.length > 0) {
-          console.info('[store] Migriere lokale Daten in die DB…')
-          const lokalePersonen = ladePersonenLokal()
           await migriereLokaldaten(
             {
               projekte:      lokalerState.projekte,
@@ -284,9 +269,8 @@ export class Store {
               kommentare:    lokalerState.kommentare,
               berichte:      lokalerState.berichte,
             },
-            lokalePersonen
+            ladePersonenLokal()
           )
-          console.info('[store] Migration abgeschlossen.')
           this.state = {
             ...this.state,
             projekte:      lokalerState.projekte,
@@ -299,14 +283,10 @@ export class Store {
           speichereState(this.state)
           this.version += 1
           this.listeners.forEach((l) => l())
-        } else {
-          console.info('[store] Kein lokaler State gefunden, starte mit leerem Workspace.')
         }
         return
       }
 
-      // DB hat Daten → State aktualisieren
-      console.info('[store] Lade aus DB:', dbDaten.projekte.length, 'Projekte')
       this.state = {
         ...this.state,
         projekte:      dbDaten.projekte,
