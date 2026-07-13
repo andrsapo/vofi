@@ -1476,6 +1476,9 @@ if (heroEl) heroObs.observe(heroEl)
       note:    '[' + selectedChip + '] ' + msgEl.value.trim()
     }).catch(err => console.error('[emailjs] Kontakt-Fehler:', err));
 
+    // Lock card height before swapping content
+    const formWrap = document.getElementById('kFormWrap');
+    formWrap.style.minHeight = formWrap.offsetHeight + 'px';
     // Success state
     const wrap = document.getElementById('kFormInner');
     wrap.innerHTML = `
