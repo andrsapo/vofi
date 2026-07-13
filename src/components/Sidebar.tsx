@@ -161,11 +161,12 @@ export function Sidebar() {
       {offen && (
         <div className="sidebar__baum">
           <div className="sidebar__sektion">
-            <button
-              type="button"
+            <div
               className="sidebar__sektion-kopf"
               onClick={() => setSektionOffen((v) => !v)}
+              role="button"
               aria-expanded={sektionOffen}
+              style={{ cursor: 'pointer' }}
             >
               <IconChevronOben size={13} style={{ transform: sektionOffen ? undefined : 'rotate(180deg)', transition: 'transform 0.15s' }} />
               <span>Investitionsrechnungen</span>
@@ -177,7 +178,7 @@ export function Sidebar() {
               >
                 <IconPlusKreis size={15} />
               </button>
-            </button>
+            </div>
             {sektionOffen && app.projekte.map((p) => {
               const aktiv =
                 (route.view === 'projekt' && route.projektId === p.id) ||
