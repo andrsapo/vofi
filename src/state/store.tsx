@@ -294,11 +294,27 @@ export class Store {
       }
 
       // DB hat Daten → State zusammenführen
-      // Lokale szenarioDaten füllen Lücken (FK-Timing: upsert läuft async)
+      // Leere szenarioDaten (FK-Timing-Fehler) mit Defaults auffüllen
       const mergedSzenarioDaten: Record<string, SzenarioDaten> = { ...this.state.szenarioDaten }
       for (const [id, dbEintrag] of Object.entries(dbDaten.szenarioDaten)) {
         if (dbEintrag && Object.keys(dbEintrag).length > 0) {
           mergedSzenarioDaten[id] = dbEintrag
+        }
+        // leer → lokalen Stand behalten (wird unten ggf. mit Defaults befüllt)
+      }
+      // Szenarien ohne szenarioDaten mit Leer-Defaults befüllen und reparieren
+      const { erzeugeLeereObjektdaten, erzeugeLeereErtraegeAufwendungen, erzeugeLeereFinanzierung } = await import('../data/defaults')
+      const { upsertSzenarioDaten } = await import('../data/supabaseRepository')
+      for (const s of dbDaten.szenarien) {
+        if (!mergedSzenarioDaten[s.id] || Object.keys(mergedSzenarioDaten[s.id]).length === 0) {
+          const leereDaten: SzenarioDaten = {
+            objektdaten: erzeugeLeereObjektdaten(),
+            ertraegeAufwendungen: erzeugeLeereErtraegeAufwendungen(),
+            finanzierung: erzeugeLeereFinanzierung(),
+          }
+          mergedSzenarioDaten[s.id] = leereDaten
+          // Repariere leeren DB-Eintrag
+          upsertSzenarioDaten(s.id, leereDaten).catch(console.error)
         }
       }
       this.state = {
