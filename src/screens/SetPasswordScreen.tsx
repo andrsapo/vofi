@@ -16,6 +16,8 @@ export default function SetPasswordScreen() {
   const { updatePassword, session } = useAuthContext()
   const [password, setPassword] = useState('')
   const [passwordConfirm, setPasswordConfirm] = useState('')
+  const [showPw, setShowPw] = useState(false)
+  const [showPwConfirm, setShowPwConfirm] = useState(false)
   const [error, setError] = useState<string | null>(null)
   const [loading, setLoading] = useState(false)
 
@@ -131,21 +133,33 @@ export default function SetPasswordScreen() {
               fontSize: '13.5px', fontWeight: 600, color: '#12142a', marginBottom: '18px',
             }}>
               Neues Passwort
-              <input
-                type="password"
-                value={password}
-                onChange={e => setPassword(e.target.value)}
-                placeholder="Mindestens 8 Zeichen"
-                required
-                autoComplete="new-password"
-                style={{
-                  border: '1.5px solid #d8dae3', borderRadius: '10px',
-                  padding: '13px 15px', fontFamily: 'inherit',
-                  fontSize: '15px', color: '#12142a', outline: 'none', background: '#ffffff',
-                }}
-                onFocus={e => { e.target.style.border = '1.5px solid #f6c945'; e.target.style.boxShadow = '0 0 0 3px rgba(246,201,69,.18)' }}
-                onBlur={e => { e.target.style.border = '1.5px solid #d8dae3'; e.target.style.boxShadow = 'none' }}
-              />
+              <div style={{ position: 'relative', display: 'flex' }}>
+                <input
+                  type={showPw ? 'text' : 'password'}
+                  value={password}
+                  onChange={e => setPassword(e.target.value)}
+                  placeholder="Mindestens 8 Zeichen"
+                  required
+                  autoComplete="new-password"
+                  style={{
+                    flex: 1, border: '1.5px solid #d8dae3', borderRadius: '10px',
+                    padding: '13px 56px 13px 15px', fontFamily: 'inherit',
+                    fontSize: '15px', color: '#12142a', outline: 'none', background: '#ffffff',
+                  }}
+                  onFocus={e => { e.target.style.border = '1.5px solid #f6c945'; e.target.style.boxShadow = '0 0 0 3px rgba(246,201,69,.18)' }}
+                  onBlur={e => { e.target.style.border = '1.5px solid #d8dae3'; e.target.style.boxShadow = 'none' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPw(v => !v)}
+                  style={{
+                    position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)',
+                    border: 'none', background: 'none', cursor: 'pointer',
+                    fontSize: '13.5px', fontWeight: 600, color: '#6b7180', padding: '0',
+                    fontFamily: 'inherit',
+                  }}
+                >{showPw ? 'Verbergen' : 'Anzeigen'}</button>
+              </div>
             </label>
 
             <label style={{
@@ -153,21 +167,33 @@ export default function SetPasswordScreen() {
               fontSize: '13.5px', fontWeight: 600, color: '#12142a', marginBottom: '10px',
             }}>
               Passwort bestätigen
-              <input
-                type="password"
-                value={passwordConfirm}
-                onChange={e => setPasswordConfirm(e.target.value)}
-                placeholder="Passwort wiederholen"
-                required
-                autoComplete="new-password"
-                style={{
-                  border: '1.5px solid #d8dae3', borderRadius: '10px',
-                  padding: '13px 15px', fontFamily: 'inherit',
-                  fontSize: '15px', color: '#12142a', outline: 'none', background: '#ffffff',
-                }}
-                onFocus={e => { e.target.style.border = '1.5px solid #f6c945'; e.target.style.boxShadow = '0 0 0 3px rgba(246,201,69,.18)' }}
-                onBlur={e => { e.target.style.border = '1.5px solid #d8dae3'; e.target.style.boxShadow = 'none' }}
-              />
+              <div style={{ position: 'relative', display: 'flex' }}>
+                <input
+                  type={showPwConfirm ? 'text' : 'password'}
+                  value={passwordConfirm}
+                  onChange={e => setPasswordConfirm(e.target.value)}
+                  placeholder="Passwort wiederholen"
+                  required
+                  autoComplete="new-password"
+                  style={{
+                    flex: 1, border: '1.5px solid #d8dae3', borderRadius: '10px',
+                    padding: '13px 56px 13px 15px', fontFamily: 'inherit',
+                    fontSize: '15px', color: '#12142a', outline: 'none', background: '#ffffff',
+                  }}
+                  onFocus={e => { e.target.style.border = '1.5px solid #f6c945'; e.target.style.boxShadow = '0 0 0 3px rgba(246,201,69,.18)' }}
+                  onBlur={e => { e.target.style.border = '1.5px solid #d8dae3'; e.target.style.boxShadow = 'none' }}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPwConfirm(v => !v)}
+                  style={{
+                    position: 'absolute', right: '14px', top: '50%', transform: 'translateY(-50%)',
+                    border: 'none', background: 'none', cursor: 'pointer',
+                    fontSize: '13.5px', fontWeight: 600, color: '#6b7180', padding: '0',
+                    fontFamily: 'inherit',
+                  }}
+                >{showPwConfirm ? 'Verbergen' : 'Anzeigen'}</button>
+              </div>
             </label>
 
             {error && (

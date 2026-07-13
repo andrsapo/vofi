@@ -243,8 +243,8 @@ export class Store {
    *  Wird einmalig beim App-Start aufgerufen (nach dem Rendern der UI). */
   async ladeVonServer(): Promise<void> {
     try {
-      const { ladeAppDaten, migriereLokaldaten } = await import('../data/supabaseRepository')
-      const { ladePersonen: ladePersonenLokal } = await import('../data/erpRepository')
+      const { ladeAppDaten, migriereLokaldaten, ladePersonenDB } = await import('../data/supabaseRepository')
+      const { ladeUndSyncPersonen: ladePersonenLokal } = await import('../data/erpRepository')
       const dbDaten = await ladeAppDaten()
 
       if (!dbDaten) {
@@ -261,7 +261,7 @@ export class Store {
               kommentare: lokalerState.kommentare,
               berichte: lokalerState.berichte,
             },
-            ladePersonenLokal()
+            await ladePersonenDB()
           )
           console.info('[store] Migration abgeschlossen.')
         }
