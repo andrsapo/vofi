@@ -243,8 +243,8 @@ export class Store {
    *  Wird einmalig beim App-Start aufgerufen (nach dem Rendern der UI). */
   async ladeVonServer(): Promise<void> {
     try {
-      const { ladeAppDaten, migriereLokaldaten, ladePersonenDB } = await import('../data/supabaseRepository')
-      const { ladeUndSyncPersonen: ladePersonenLokal } = await import('../data/erpRepository')
+      const { ladeAppDaten, migriereLokaldaten } = await import('../data/supabaseRepository')
+      const { ladePersonen: ladePersonenLokal } = await import('../data/erpRepository')
       const dbDaten = await ladeAppDaten()
 
       if (!dbDaten) {
@@ -252,18 +252,32 @@ export class Store {
         const lokalerState = ladePersistiertenState(this.state.aktuellerNutzerId)
         if (lokalerState && lokalerState.projekte.length > 0) {
           console.info('[store] Migriere lokale Daten in die DB…')
+          // Lokale Personen (aus localStorage) übergeben, nicht aus der leeren DB
+          const lokalePersonen = ladePersonenLokal()
           await migriereLokaldaten(
             {
-              projekte: lokalerState.projekte,
-              objektIst: lokalerState.objektIst,
-              szenarien: lokalerState.szenarien,
+              projekte:      lokalerState.projekte,
+              objektIst:     lokalerState.objektIst,
+              szenarien:     lokalerState.szenarien,
               szenarioDaten: lokalerState.szenarioDaten,
-              kommentare: lokalerState.kommentare,
-              berichte: lokalerState.berichte,
+              kommentare:    lokalerState.kommentare,
+              berichte:      lokalerState.berichte,
             },
-            await ladePersonenDB()
+            lokalePersonen
           )
           console.info('[store] Migration abgeschlossen.')
+          // State nach Migration auf lokale Daten setzen (DB wurde gerade befüllt)
+          this.state = {
+            ...this.state,
+            projekte:      lokalerState.projekte,
+            objektIst:     lokalerState.objektIst,
+            szenarien:     lokalerState.szenarien,
+            szenarioDaten: lokalerState.szenarioDaten,
+            kommentare:    lokalerState.kommentare,
+            berichte:      lokalerState.berichte,
+          }
+          this.version += 1
+          this.listeners.forEach((l) => l())
         }
         return
       }

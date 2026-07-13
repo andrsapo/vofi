@@ -45,8 +45,8 @@ function BootstrapLayer({ children }: { children: React.ReactNode }) {
       name: meta.name,
       rolle: meta.rolle,
     })
-    // Personen aus DB laden und dann App-Daten vom Server holen
-    ladeUndSyncPersonen().then(() => store.ladeVonServer())
+    // App-Daten laden (migriert ggf. localStorage → DB, dann lädt aus DB)
+    store.ladeVonServer().then(() => ladeUndSyncPersonen())
   }, [session?.user?.id])
 
   return <>{children}</>
