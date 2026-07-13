@@ -1,5 +1,6 @@
 /** Wurzelkomponente: Sidebar + interne Routen */
 
+import { useEffect } from 'react'
 import { Sidebar } from './components/Sidebar'
 import { FeldKontextProvider } from './components/felder'
 import { useApp, useStore } from './state/store'
@@ -50,16 +51,21 @@ function ProjektRoute({
   const store = useStore()
   const projekt = app.projekte.find((p) => p.id === projektId)
   const szenario = app.szenarien.find((s) => s.id === szenarioId)
-  if (!projekt || !szenario) {
-    // Daten noch nicht geladen oder Referenz ungültig → zur Projektliste
-    const erstesSzenario = app.szenarien.find((s) => s.projektId === projektId)
-    if (erstesSzenario && projekt) {
-      store.navigiere({ view: 'projekt', projektId, szenarioId: erstesSzenario.id, schritt: 1 })
-    } else {
-      store.navigiere({ view: 'dashboard' })
+
+  // Szenario-ID ungültig → korrigiere auf erstes verfügbares Szenario des Projekts
+  // (passiert wenn DB-Daten nach localStorage-Stand abweichen)
+  useEffect(() => {
+    if (projekt && !szenario) {
+      const erstesSzenario = app.szenarien.find((s) => s.projektId === projektId)
+      if (erstesSzenario) {
+        store.navigiere({ view: 'projekt', projektId, szenarioId: erstesSzenario.id, schritt: 1 })
+      } else {
+        store.navigiere({ view: 'dashboard' })
+      }
     }
-    return null
-  }
+  }, [projektId, szenarioId, !!szenario])
+
+  if (!projekt || !szenario) return null
 
   // Einheitliche Navigations-Fußleiste für alle Prozessschritte.
   // Rendering an genau einer Stelle (ProjektLayout__fuss) → Buttons springen
