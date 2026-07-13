@@ -36,6 +36,7 @@ function BootstrapLayer({ children }: { children: React.ReactNode }) {
   const store = useStore()
 
   useEffect(() => {
+    console.log('[bootstrap] useEffect fired, session:', session?.user?.id ?? 'none')
     if (!session?.user) return
     const user = session.user
     const meta = user.user_metadata ?? {}
@@ -45,8 +46,13 @@ function BootstrapLayer({ children }: { children: React.ReactNode }) {
       name: meta.name,
       rolle: meta.rolle,
     })
-    // App-Daten laden (migriert ggf. localStorage → DB, dann lädt aus DB)
-    store.ladeVonServer().then(() => ladeUndSyncPersonen())
+    console.log('[bootstrap] Starte ladeVonServer…')
+    store.ladeVonServer()
+      .then(() => {
+        console.log('[bootstrap] ladeVonServer abgeschlossen, starte ladeUndSyncPersonen')
+        return ladeUndSyncPersonen()
+      })
+      .catch((e) => console.error('[bootstrap] Fehler:', e))
   }, [session?.user?.id])
 
   return <>{children}</>
