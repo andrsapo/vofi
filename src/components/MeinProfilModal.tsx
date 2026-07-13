@@ -30,6 +30,9 @@ export function MeinProfilModal({ nutzerId, onClose }: { nutzerId: string; onClo
   const person = erpRepository.ladePerson(nutzerId)!
   const [entwurf, setEntwurf] = useState<Entwurf>(() => entwurfVonPerson(person))
   const [gespeichert, setGespeichert] = useState<Entwurf>(() => entwurfVonPerson(person))
+  const [showPwAktuell, setShowPwAktuell] = useState(false)
+  const [showPwNeu, setShowPwNeu] = useState(false)
+  const [showPwBestaetigen, setShowPwBestaetigen] = useState(false)
   const dateiInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -128,21 +131,42 @@ export function MeinProfilModal({ nutzerId, onClose }: { nutzerId: string; onClo
           <div className="es-raster">
             <div className="es-feld es-feld--voll">
               <label className="es-label" htmlFor="mp-pw-aktuell">Aktuelles Passwort</label>
-              <input id="mp-pw-aktuell" type="password" className="es-input" value={entwurf.aktuellesPasswort}
-                autoComplete="current-password"
-                onChange={(e) => set('aktuellesPasswort', e.target.value)} />
+              <div style={{ position: 'relative', display: 'flex' }}>
+                <input id="mp-pw-aktuell" type={showPwAktuell ? 'text' : 'password'} className="es-input" value={entwurf.aktuellesPasswort}
+                  autoComplete="current-password" style={{ flex: 1, paddingRight: '80px' }}
+                  onChange={(e) => set('aktuellesPasswort', e.target.value)} />
+                <button type="button" onClick={() => setShowPwAktuell(v => !v)}
+                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', border: 0, background: 'none', cursor: 'pointer', fontSize: '12.5px', fontWeight: 600, color: '#6b7180', fontFamily: 'inherit', padding: '4px 6px', borderRadius: '6px' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#12142a')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#6b7180')}
+                >{showPwAktuell ? 'Verbergen' : 'Anzeigen'}</button>
+              </div>
             </div>
             <div className="es-feld">
               <label className="es-label" htmlFor="mp-pw-neu">Neues Passwort</label>
-              <input id="mp-pw-neu" type="password" className="es-input" value={entwurf.neuesPasswort}
-                autoComplete="new-password"
-                onChange={(e) => set('neuesPasswort', e.target.value)} />
+              <div style={{ position: 'relative', display: 'flex' }}>
+                <input id="mp-pw-neu" type={showPwNeu ? 'text' : 'password'} className="es-input" value={entwurf.neuesPasswort}
+                  autoComplete="new-password" style={{ flex: 1, paddingRight: '80px' }}
+                  onChange={(e) => set('neuesPasswort', e.target.value)} />
+                <button type="button" onClick={() => setShowPwNeu(v => !v)}
+                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', border: 0, background: 'none', cursor: 'pointer', fontSize: '12.5px', fontWeight: 600, color: '#6b7180', fontFamily: 'inherit', padding: '4px 6px', borderRadius: '6px' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#12142a')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#6b7180')}
+                >{showPwNeu ? 'Verbergen' : 'Anzeigen'}</button>
+              </div>
             </div>
             <div className="es-feld">
               <label className="es-label" htmlFor="mp-pw-bestaetigen">Neues Passwort bestätigen</label>
-              <input id="mp-pw-bestaetigen" type="password" className="es-input" value={entwurf.neuesPasswortBestaetigen}
-                autoComplete="new-password"
-                onChange={(e) => set('neuesPasswortBestaetigen', e.target.value)} />
+              <div style={{ position: 'relative', display: 'flex' }}>
+                <input id="mp-pw-bestaetigen" type={showPwBestaetigen ? 'text' : 'password'} className="es-input" value={entwurf.neuesPasswortBestaetigen}
+                  autoComplete="new-password" style={{ flex: 1, paddingRight: '80px' }}
+                  onChange={(e) => set('neuesPasswortBestaetigen', e.target.value)} />
+                <button type="button" onClick={() => setShowPwBestaetigen(v => !v)}
+                  style={{ position: 'absolute', right: '10px', top: '50%', transform: 'translateY(-50%)', border: 0, background: 'none', cursor: 'pointer', fontSize: '12.5px', fontWeight: 600, color: '#6b7180', fontFamily: 'inherit', padding: '4px 6px', borderRadius: '6px' }}
+                  onMouseEnter={e => (e.currentTarget.style.color = '#12142a')}
+                  onMouseLeave={e => (e.currentTarget.style.color = '#6b7180')}
+                >{showPwBestaetigen ? 'Verbergen' : 'Anzeigen'}</button>
+              </div>
             </div>
           </div>
         </div>
