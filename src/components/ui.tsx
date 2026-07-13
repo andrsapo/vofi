@@ -177,6 +177,7 @@ export function ZahlenInput({
           const geparst = parseZahl(e.target.value)
           if (geparst !== null) onWert(geparst)
         }}
+        onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
       />
       {einheit && <span className="zahlen-input__einheit">{einheit}</span>}
     </span>
