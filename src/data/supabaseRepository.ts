@@ -67,8 +67,10 @@ export async function ladeAppDaten(): Promise<AppDaten | null> {
 // ── Projekte ─────────────────────────────────────────────────────────────────
 
 export async function upsertProjekt(p: Projekt, oi: ObjektIst): Promise<void> {
+  // titelbildUrl nicht in DB speichern (Data-URL zu groß für Supabase Row-Limit)
+  const { titelbildUrl: _, ...projektOhneBild } = p
   await Promise.all([
-    supabase.from('projekte').upsert({ id: p.id, data: p }),
+    supabase.from('projekte').upsert({ id: p.id, data: projektOhneBild }),
     supabase.from('objekt_ist').upsert({ projekt_id: p.id, data: oi }),
   ])
 }

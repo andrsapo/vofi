@@ -293,8 +293,15 @@ export class Store {
         return
       }
 
-      // DB hat Daten → State zusammenführen
-      // Leere szenarioDaten (FK-Timing-Fehler) mit Defaults auffüllen
+      // Titelbilder aus localStorage wiederherstellen (werden nicht in DB gespeichert)
+      const lokalBilder: Record<string, string> = {}
+      for (const p of this.state.projekte) {
+        if (p.titelbildUrl) lokalBilder[p.id] = p.titelbildUrl
+      }
+      const mergedProjekte = dbDaten.projekte.map(p => ({
+        ...p,
+        titelbildUrl: lokalBilder[p.id] ?? p.titelbildUrl,
+      }))
       const mergedSzenarioDaten: Record<string, SzenarioDaten> = { ...this.state.szenarioDaten }
       for (const [id, dbEintrag] of Object.entries(dbDaten.szenarioDaten)) {
         if (dbEintrag && Object.keys(dbEintrag).length > 0) {
@@ -318,7 +325,7 @@ export class Store {
       }
       this.state = {
         ...this.state,
-        projekte:      dbDaten.projekte,
+        projekte:      mergedProjekte,
         objektIst:     { ...this.state.objektIst, ...dbDaten.objektIst },
         szenarien:     dbDaten.szenarien,
         szenarioDaten: mergedSzenarioDaten,
