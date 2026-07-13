@@ -221,6 +221,11 @@ class MockErpRepository implements ErpRepository {
 
 export const erpRepository: ErpRepository = new MockErpRepository()
 
+/** Direkter Zugriff auf den In-Memory-Personen-Cache (synchron). */
+export function ladePersonen(): Person[] {
+  return MOCK_PERSONEN
+}
+
 /** Lädt Personen aus der DB und synchronisiert mit dem In-Memory-Cache.
  *  Wird beim App-Start in BootstrapLayer aufgerufen. */
 export async function ladeUndSyncPersonen(): Promise<void> {
