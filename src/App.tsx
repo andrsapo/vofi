@@ -50,7 +50,16 @@ function ProjektRoute({
   const store = useStore()
   const projekt = app.projekte.find((p) => p.id === projektId)
   const szenario = app.szenarien.find((s) => s.id === szenarioId)
-  if (!projekt || !szenario) return <Dashboard />
+  if (!projekt || !szenario) {
+    // Daten noch nicht geladen oder Referenz ungültig → zur Projektliste
+    const erstesSzenario = app.szenarien.find((s) => s.projektId === projektId)
+    if (erstesSzenario && projekt) {
+      store.navigiere({ view: 'projekt', projektId, szenarioId: erstesSzenario.id, schritt: 1 })
+    } else {
+      store.navigiere({ view: 'dashboard' })
+    }
+    return null
+  }
 
   // Einheitliche Navigations-Fußleiste für alle Prozessschritte.
   // Rendering an genau einer Stelle (ProjektLayout__fuss) → Buttons springen
