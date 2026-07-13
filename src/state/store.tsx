@@ -302,18 +302,17 @@ export class Store {
         }
         // leer → lokalen Stand behalten (wird unten ggf. mit Defaults befüllt)
       }
-      // Szenarien ohne szenarioDaten mit korrekten Defaults befüllen und reparieren
-      const { erzeugeSzenarioDaten } = await import('../data/defaults')
+      // Szenarien ohne szenarioDaten mit Defaults befüllen und reparieren
+      const { erzeugeLeereObjektdaten, erzeugeLeereErtraegeAufwendungen, erzeugeLeereFinanzierung } = await import('../data/defaults')
       const { upsertSzenarioDaten } = await import('../data/supabaseRepository')
       for (const s of dbDaten.szenarien) {
         if (!mergedSzenarioDaten[s.id] || Object.keys(mergedSzenarioDaten[s.id]).length === 0) {
-          const objektIst = dbDaten.objektIst[s.projektId] ?? this.state.objektIst[s.projektId]
-          const erp = objektIst ? erpRepository.ladeObjekt(
-            dbDaten.projekte.find(p => p.id === s.projektId)?.objektId ?? ''
-          ) : undefined
-          const repariert: SzenarioDaten = erzeugeSzenarioDaten(objektIst ?? {}, erp)
+          const repariert: SzenarioDaten = {
+            objektdaten: erzeugeLeereObjektdaten(),
+            ertraegeAufwendungen: erzeugeLeereErtraegeAufwendungen(),
+            finanzierung: erzeugeLeereFinanzierung(),
+          }
           mergedSzenarioDaten[s.id] = repariert
-          // Repariere leeren DB-Eintrag
           upsertSzenarioDaten(s.id, repariert).catch(console.error)
         }
       }
