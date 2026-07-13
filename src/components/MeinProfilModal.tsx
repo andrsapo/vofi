@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import type { Person } from '../types'
 import { erpRepository } from '../data/erpRepository'
+import { supabase } from '../lib/supabaseClient'
 import { Avatar } from './ui'
 import { IconKamera } from './icons'
 
@@ -33,6 +34,9 @@ export function MeinProfilModal({ nutzerId, onClose }: { nutzerId: string; onClo
   const [showPwAktuell, setShowPwAktuell] = useState(false)
   const [showPwNeu, setShowPwNeu] = useState(false)
   const [showPwBestaetigen, setShowPwBestaetigen] = useState(false)
+  const [pwFehler, setPwFehler] = useState<string | null>(null)
+  const [pwErfolg, setPwErfolg] = useState(false)
+  const [speichernLaeuft, setSpeichernLaeuft] = useState(false)
   const dateiInputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
@@ -52,9 +56,32 @@ export function MeinProfilModal({ nutzerId, onClose }: { nutzerId: string; onClo
 
   function set<K extends keyof Entwurf>(feld: K, wert: Entwurf[K]) {
     setEntwurf((prev) => ({ ...prev, [feld]: wert }))
+    if (feld === 'neuesPasswort' || feld === 'neuesPasswortBestaetigen') {
+      setPwFehler(null)
+      setPwErfolg(false)
+    }
   }
 
-  function speichern() {
+  async function speichern() {
+    setPwFehler(null)
+    setPwErfolg(false)
+
+    // Passwort-Validierung
+    const willPasswortAendern = entwurf.neuesPasswort !== '' || entwurf.neuesPasswortBestaetigen !== ''
+    if (willPasswortAendern) {
+      if (entwurf.neuesPasswort.length < 8) {
+        setPwFehler('Das neue Passwort muss mindestens 8 Zeichen lang sein.')
+        return
+      }
+      if (entwurf.neuesPasswort !== entwurf.neuesPasswortBestaetigen) {
+        setPwFehler('Die Passwörter stimmen nicht überein.')
+        return
+      }
+    }
+
+    setSpeichernLaeuft(true)
+
+    // Profildaten speichern
     const aktualisiert: Person = {
       ...person,
       name: entwurf.name.trim() || person.name,
@@ -63,6 +90,22 @@ export function MeinProfilModal({ nutzerId, onClose }: { nutzerId: string; onClo
       avatarUrl: entwurf.avatarUrl,
     }
     erpRepository.aktualisierePerson(aktualisiert)
+
+    // Passwort über Supabase ändern
+    if (willPasswortAendern) {
+      const { error } = await supabase.auth.updateUser({ password: entwurf.neuesPasswort })
+      setSpeichernLaeuft(false)
+      if (error) {
+        setPwFehler(error.message.includes('same password')
+          ? 'Das neue Passwort darf nicht mit dem aktuellen übereinstimmen.'
+          : error.message)
+        return
+      }
+      setPwErfolg(true)
+    } else {
+      setSpeichernLaeuft(false)
+    }
+
     const neuerSnapshot = { ...entwurf, aktuellesPasswort: '', neuesPasswort: '', neuesPasswortBestaetigen: '' }
     setGespeichert(neuerSnapshot)
     setEntwurf(neuerSnapshot)
@@ -169,6 +212,28 @@ export function MeinProfilModal({ nutzerId, onClose }: { nutzerId: string; onClo
               </div>
             </div>
           </div>
+
+          {/* Passwort-Feedback */}
+          {pwFehler && (
+            <div style={{
+              background: '#fdeae6', border: '1px solid #f5c9be', borderRadius: '8px',
+              padding: '10px 14px', fontSize: '13px', color: '#c0392b',
+              lineHeight: 1.5, marginTop: '12px',
+            }}>
+              {pwFehler}
+            </div>
+          )}
+          {pwErfolg && (
+            <div style={{
+              background: '#eaf6ee', border: '1px solid #a8dbb8', borderRadius: '8px',
+              padding: '10px 14px', fontSize: '13px', color: '#2f7a4a',
+              lineHeight: 1.5, marginTop: '12px',
+              display: 'flex', alignItems: 'center', gap: '8px',
+            }}>
+              <span style={{ fontSize: '15px' }}>✓</span>
+              Passwort wurde erfolgreich geändert.
+            </div>
+          )}
         </div>
 
         <div className="es-fuss">
@@ -177,9 +242,10 @@ export function MeinProfilModal({ nutzerId, onClose }: { nutzerId: string; onClo
               Abbrechen
             </button>
             <button type="button"
-              className={`es-btn es-btn--speichern${hatAenderungen ? ' es-btn--speichern-aktiv' : ''}`}
+              className={`es-btn es-btn--speichern${hatAenderungen && !speichernLaeuft ? ' es-btn--speichern-aktiv' : ''}`}
+              disabled={!hatAenderungen || speichernLaeuft}
               onClick={speichern}>
-              Speichern
+              {speichernLaeuft ? 'Bitte warten…' : 'Speichern'}
             </button>
           </div>
         </div>
