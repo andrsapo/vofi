@@ -239,20 +239,41 @@ export class Store {
     this.listeners.forEach((l) => l())
   }
 
-  /** Lädt den aktuellen Stand aus der Supabase-DB und überschreibt localStorage.
-   *  Wird einmalig beim App-Start aufgerufen (nach dem Rendern der UI). */
   async ladeVonServer(): Promise<void> {
     try {
       const { ladeAppDaten, migriereLokaldaten } = await import('../data/supabaseRepository')
       const { ladePersonen: ladePersonenLokal } = await import('../data/erpRepository')
       const dbDaten = await ladeAppDaten()
 
+      console.info('[store] ladeVonServer: dbDaten=', dbDaten ? `${dbDaten.projekte.length} Projekte` : 'null (DB leer)')
+
       if (!dbDaten) {
         // DB leer → bestehende localStorage-Daten migrieren
-        const lokalerState = ladePersistiertenState(this.state.aktuellerNutzerId)
+        // Wir lesen den raw localStorage direkt aus, unabhängig von aktuellerNutzerId
+        const rawKeys = ['immology.appState']
+        let lokalerState: AppState | null = null
+
+        // Versuche zuerst mit aktueller nutzerId
+        lokalerState = ladePersistiertenState(this.state.aktuellerNutzerId)
+
+        // Falls leer: versuche den Raw-JSON direkt (ignoriere Versions-/ID-Check)
+        if (!lokalerState || lokalerState.projekte.length === 0) {
+          try {
+            const raw = window.localStorage.getItem('immology.appState')
+            if (raw) {
+              const parsed = JSON.parse(raw)
+              if (parsed?.data?.projekte?.length > 0) {
+                console.info('[store] Migriere localStorage-Daten (ignoriere nutzerId-Check), Projekte:', parsed.data.projekte.length)
+                lokalerState = { ...initialState(this.state.aktuellerNutzerId), ...parsed.data, aktuellerNutzerId: this.state.aktuellerNutzerId, ui: initialState(this.state.aktuellerNutzerId).ui, route: { view: 'dashboard' } }
+              }
+            }
+          } catch { /* ignore */ }
+        }
+
+        console.info('[store] Lokale Projekte:', lokalerState?.projekte?.length ?? 0, 'Personen:', ladePersonenLokal().length)
+
         if (lokalerState && lokalerState.projekte.length > 0) {
           console.info('[store] Migriere lokale Daten in die DB…')
-          // Lokale Personen (aus localStorage) übergeben, nicht aus der leeren DB
           const lokalePersonen = ladePersonenLokal()
           await migriereLokaldaten(
             {
@@ -266,7 +287,6 @@ export class Store {
             lokalePersonen
           )
           console.info('[store] Migration abgeschlossen.')
-          // State nach Migration auf lokale Daten setzen (DB wurde gerade befüllt)
           this.state = {
             ...this.state,
             projekte:      lokalerState.projekte,
@@ -276,13 +296,17 @@ export class Store {
             kommentare:    lokalerState.kommentare,
             berichte:      lokalerState.berichte,
           }
+          speichereState(this.state)
           this.version += 1
           this.listeners.forEach((l) => l())
+        } else {
+          console.info('[store] Kein lokaler State gefunden, starte mit leerem Workspace.')
         }
         return
       }
 
       // DB hat Daten → State aktualisieren
+      console.info('[store] Lade aus DB:', dbDaten.projekte.length, 'Projekte')
       this.state = {
         ...this.state,
         projekte:      dbDaten.projekte,
