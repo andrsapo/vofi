@@ -131,70 +131,76 @@ function speichereState(state: AppState): void {
 }
 
 /** Schreibt eine einzelne Mutation fire-and-forget in die DB.
- *  Fehler werden geloggt aber nie an die UI weitergegeben. */
+ *  Projekte werden vor Szenarien geschrieben (FK-Reihenfolge). */
 function syncMutationZuDB(prev: AppState, next: AppState): void {
   import('../data/supabaseRepository').then(
-    ({
+    async ({
       upsertProjekt, deleteProjekt,
       upsertSzenario, deleteSzenario, upsertSzenarioDaten,
-      upsertKommentar, deleteKommentar, deleteKommentareVonProjekt,
-      upsertBericht, deleteBericht, deleteBerichteVonProjekt,
+      upsertKommentar, deleteKommentar,
+      upsertBericht, deleteBericht,
     }) => {
-      // Projekte: neu oder geändert
+      // 1. Projekte zuerst (FK-Voraussetzung für Szenarien)
+      const projektWrites: Promise<void>[] = []
       for (const p of next.projekte) {
         const alt = prev.projekte.find((x) => x.id === p.id)
         if (!alt || JSON.stringify(alt) !== JSON.stringify(p) || JSON.stringify(prev.objektIst[p.id]) !== JSON.stringify(next.objektIst[p.id])) {
-          upsertProjekt(p, next.objektIst[p.id] ?? {}).catch(console.error)
+          projektWrites.push(upsertProjekt(p, next.objektIst[p.id] ?? {}))
         }
       }
-      // Projekte: gelöscht
+      // Gelöschte Projekte (Cascade löscht Szenarien/Daten automatisch)
       for (const p of prev.projekte) {
         if (!next.projekte.find((x) => x.id === p.id)) {
-          deleteProjekt(p.id).catch(console.error)
+          projektWrites.push(deleteProjekt(p.id))
         }
       }
-      // Szenarien: neu oder geändert
+      if (projektWrites.length > 0) {
+        await Promise.all(projektWrites).catch(console.error)
+      }
+
+      // 2. Szenarien (nach Projekten, FK-sicher)
+      const szenarioWrites: Promise<void>[] = []
       for (const s of next.szenarien) {
         const alt = prev.szenarien.find((x) => x.id === s.id)
         if (!alt || JSON.stringify(alt) !== JSON.stringify(s) || JSON.stringify(prev.szenarioDaten[s.id]) !== JSON.stringify(next.szenarioDaten[s.id])) {
-          upsertSzenario(s, next.szenarioDaten[s.id] ?? ({} as any)).catch(console.error)
+          szenarioWrites.push(upsertSzenario(s, next.szenarioDaten[s.id] ?? ({} as any)))
         }
       }
-      // SzenarioDaten ohne neues Szenario (z.B. aendereSzenarioDaten)
-      for (const id of Object.keys(next.szenarioDaten)) {
-        if (next.szenarien.find((s) => s.id === id) && JSON.stringify(prev.szenarioDaten[id]) !== JSON.stringify(next.szenarioDaten[id])) {
-          if (prev.szenarien.find((s) => s.id === id)) {
-            upsertSzenarioDaten(id, next.szenarioDaten[id]).catch(console.error)
-          }
-        }
-      }
-      // Szenarien: gelöscht
       for (const s of prev.szenarien) {
         if (!next.szenarien.find((x) => x.id === s.id)) {
-          deleteSzenario(s.id).catch(console.error)
+          szenarioWrites.push(deleteSzenario(s.id))
         }
       }
-      // Kommentare: neu oder geändert
+      if (szenarioWrites.length > 0) {
+        await Promise.all(szenarioWrites).catch(console.error)
+      }
+
+      // 3. SzenarioDaten-Updates ohne Szenario-Änderung
+      for (const id of Object.keys(next.szenarioDaten)) {
+        if (next.szenarien.find((s) => s.id === id) && prev.szenarien.find((s) => s.id === id) &&
+            JSON.stringify(prev.szenarioDaten[id]) !== JSON.stringify(next.szenarioDaten[id])) {
+          upsertSzenarioDaten(id, next.szenarioDaten[id]).catch(console.error)
+        }
+      }
+
+      // 4. Kommentare & Berichte (parallel, keine FK-Abhängigkeit von Szenarien)
       for (const k of next.kommentare) {
         const alt = prev.kommentare.find((x) => x.id === k.id)
         if (!alt || JSON.stringify(alt) !== JSON.stringify(k)) {
           upsertKommentar(k).catch(console.error)
         }
       }
-      // Kommentare: gelöscht
       for (const k of prev.kommentare) {
         if (!next.kommentare.find((x) => x.id === k.id)) {
           deleteKommentar(k.id).catch(console.error)
         }
       }
-      // Berichte: neu oder geändert
       for (const b of next.berichte) {
         const alt = prev.berichte.find((x) => x.id === b.id)
         if (!alt || JSON.stringify(alt) !== JSON.stringify(b)) {
           upsertBericht(b).catch(console.error)
         }
       }
-      // Berichte: gelöscht
       for (const b of prev.berichte) {
         if (!next.berichte.find((x) => x.id === b.id)) {
           deleteBericht(b.id).catch(console.error)
