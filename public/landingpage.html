@@ -346,6 +346,47 @@ blockquote{font-size:.96rem;font-weight:500;line-height:1.7;padding-top:24px;col
   .dm-tab{font-size:13px;padding:8px 14px}
 }
 
+/* ── Kontakt Sektion ────────────────── */
+.kontakt-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.2fr);gap:24px;margin-top:52px}
+.kontakt-trust{background:#12142a;border-radius:var(--rl);padding:44px 40px;color:#fff;display:flex;flex-direction:column}
+.kontakt-trust h3{color:#fff;font-size:1.2rem;font-weight:800;letter-spacing:-.02em;margin:14px 0 10px}
+.kontakt-trust .ktrust-sub{font-size:.9rem;color:rgba(255,255,255,.55);line-height:1.6;margin:0 0 22px}
+.ktrust-checks{display:flex;flex-direction:column;gap:12px}
+.ktrust-check{display:flex;align-items:center;gap:11px;font-size:.88rem;color:rgba(255,255,255,.68)}
+.ktrust-check-ic{width:18px;height:18px;border-radius:50%;background:rgba(246,201,69,.14);display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.ktrust-contact{margin-top:auto;padding-top:24px;border-top:1px solid rgba(255,255,255,.12);display:flex;align-items:center;gap:12px}
+.kontakt-form{background:#fff;border-radius:var(--rl);box-shadow:var(--sh);padding:40px}
+.kchips-label{font-size:13px;font-weight:600;color:#12142a;margin-bottom:10px}
+.kchips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px}
+.kchip{border:1.5px solid #d8dae3;background:#fff;color:#6b7180;font-family:inherit;font-size:.84rem;font-weight:600;padding:7px 16px;border-radius:20px;cursor:pointer;transition:background .12s,border-color .12s,color .12s}
+.kchip.active{background:#12142a;border-color:#12142a;color:#fff}
+.kform-grid2{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:14px;margin-bottom:14px}
+.kform-grid2 input{width:100%}
+.kform-label{display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:600;color:#12142a;margin-bottom:14px}
+.kform-label:last-of-type{margin-bottom:0}
+.kform-input,.kform-textarea{border:1.5px solid #d8dae3;border-radius:10px;padding:12px 14px;font-family:inherit;font-size:14.5px;color:#12142a;outline:none;transition:border-color .12s;width:100%}
+.kform-input:focus,.kform-textarea:focus{border-color:var(--y)}
+.kform-input.kform-err{border-color:#c23b3b}
+.kform-errmsg{font-size:12px;color:#c23b3b;margin-top:4px;display:none}
+.kform-errmsg.visible{display:block}
+.kform-textarea{resize:vertical}
+.kdsgvo{display:flex;align-items:flex-start;gap:10px;margin:16px 0 20px;cursor:pointer;font-size:13px;color:#6b7180;line-height:1.5;user-select:none}
+.kdsgvo input[type=checkbox]{display:none}
+.kdsgvo-box{width:18px;height:18px;border-radius:4px;border:1.5px solid #d8dae3;background:#fff;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;transition:background .12s,border-color .12s}.kdsgvo-box svg{opacity:0;transition:opacity .1s;pointer-events:none}.kdsgvo.checked .kdsgvo-box svg{opacity:1}.kdsgvo span:last-child{pointer-events:none}
+.kdsgvo.checked .kdsgvo-box{background:var(--y);border-color:var(--y)}
+.kform-cta{width:100%;font-family:inherit;font-size:1rem;font-weight:700;padding:15px 22px;border:none;border-radius:var(--rs);cursor:pointer;transition:background .15s,box-shadow .15s,color .15s,transform .15s;display:flex;align-items:center;justify-content:center;gap:9px}
+.kform-cta:not(:disabled){background:var(--y);color:var(--c1)}
+.kform-cta:not(:disabled):hover{background:var(--yd);transform:translateY(-1px);box-shadow:0 4px 18px rgba(246,201,69,.42)}
+.kform-cta:disabled{background:#eceef4;color:#9aa0af;cursor:default}
+.kform-microcopy{text-align:center;font-size:.74rem;color:var(--t3);margin-top:10px}
+.kontakt-success{display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:48px 24px}
+.kontakt-success-ic{width:64px;height:64px;border-radius:50%;background:#eaf6ee;color:#2f9e5f;display:flex;align-items:center;justify-content:center;margin:0 auto 20px}
+.kontakt-success h3{font-size:22px;font-weight:800;color:#12142a;letter-spacing:-.02em;margin-bottom:10px}
+.kontakt-success p{font-size:15px;color:#4a4f60;line-height:1.6;max-width:380px;margin:0 auto 24px}
+.btn-ghost-dark{background:transparent;color:var(--t);padding:11px 22px;border:1.5px solid #d8dae3;border-radius:var(--rs);font-family:inherit;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .15s}
+.btn-ghost-dark:hover{background:var(--off2);border-color:#b0b3c0}
+@media(max-width:1024px){.kontakt-grid{grid-template-columns:1fr}}
+
 /* ── Mobile Sticky CTA ──────────────── */
 .mcta{display:none;position:fixed;bottom:0;left:0;right:0;background:var(--w);border-top:1px solid var(--bdr);padding:12px 20px 16px;z-index:200;box-shadow:0 -4px 20px rgba(13,15,34,.08)}
 .mcta .btn-y{width:100%;justify-content:center;font-size:.95rem;padding:15px}
@@ -408,6 +449,7 @@ blockquote{font-size:.96rem;font-weight:500;line-height:1.7;padding-top:24px;col
       <a href="#video" data-section="video">Video ansehen</a>
       <a href="#features" data-section="features">Features</a>
       <a href="#referenzen" data-section="referenzen">Referenzen</a>
+      <a href="#kontakt" data-section="kontakt">Kontakt</a>
     </div>
     <a href="#demo" class="nav__cta">Demo buchen →</a>
   </div>
@@ -431,6 +473,10 @@ blockquote{font-size:.96rem;font-weight:500;line-height:1.7;padding-top:24px;col
         <a class="btn btn-ghost" href="#video">
           <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
           Video ansehen
+        </a>
+        <a class="btn btn-ghost" href="#kontakt">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+          Uns kontaktieren
         </a>
       </div>
       <div class="hero__trust">
@@ -546,7 +592,7 @@ blockquote{font-size:.96rem;font-weight:500;line-height:1.7;padding-top:24px;col
     </div>
     <div class="vplayer fade-up" id="vplayer">
       <video src="vofi-immology.mp4" id="mainVid" preload="metadata" style="display:none;width:100%;height:100%;position:absolute;inset:0"></video>
-      <video src="vofi-immology.mp4" id="vthumbVid" class="vthumb" muted preload="metadata" onloadedmetadata="this.currentTime=38"></video>
+      <img src="video-thumbnail.jpg" id="vthumbVid" class="vthumb" style="width:100%;height:100%;object-fit:cover;display:block;">
       <div class="vplayer__btn" id="vplayerBtn" onclick="playMain()">
         <div class="vplayer__icon">
           <svg width="26" height="26" viewBox="0 0 24 24" fill="#12142a" style="margin-left:4px"><polygon points="5 3 19 12 5 21 5 3"/></svg>
@@ -650,12 +696,108 @@ blockquote{font-size:.96rem;font-weight:500;line-height:1.7;padding-top:24px;col
       <h2>Verlässliche Investitionsentscheidungen<br>beginnen heute.</h2>
       <div style="display:flex;flex-direction:column;align-items:center;gap:32px;margin-top:40px">
         <p style="color:rgba(255,255,255,.48);font-size:1rem;margin:0">In wenigen Stunden einsatzbereit.</p>
-        <a class="btn btn-y" href="#demo" style="font-size:1rem;padding:16px 36px;display:inline-flex">
-          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-          Demo buchen
-        </a>
+        <div style="display:flex;gap:16px;align-items:center;justify-content:center;flex-wrap:wrap">
+          <a class="btn btn-y" href="#demo" style="font-size:1rem;padding:16px 36px;display:inline-flex">
+            <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            Demo buchen
+          </a>
+          <a class="btn btn-ghost" href="#kontakt" style="font-size:1rem;padding:15px 22px">
+            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="M2 7l10 7 10-7"/></svg>
+            Uns kontaktieren
+          </a>
+        </div>
         <p class="cband__fn" style="margin:0">DSGVO-konform · Hosting in Deutschland</p>
       </div>
+    </div>
+  </div>
+</section>
+
+<!-- KONTAKT -->
+<section class="sec" id="kontakt" style="background:var(--off2)">
+  <div class="w">
+    <div class="fade-up" style="text-align:center">
+      <span class="ey">Kontakt</span>
+      <h2 style="margin-top:10px;font-size:clamp(1.6rem,3vw,2.25rem);font-weight:700;letter-spacing:-.02em;max-width:560px;margin-left:auto;margin-right:auto">Sprechen Sie mit Menschen,<br>die VoFi rechnen können.</h2>
+      <p style="color:var(--t2);margin-top:14px;max-width:480px;margin-left:auto;margin-right:auto">Ihre Anfrage landet direkt bei der Produktberatung — Antwort innerhalb eines Werktags.</p>
+    </div>
+    <div class="kontakt-grid fade-up stagger-1">
+
+      <!-- Left: trust card -->
+      <div class="kontakt-trust">
+        <span class="pc__tag" style="background:rgba(246,201,69,.12);color:var(--y);display:inline-block;margin-bottom:0">Direkter Draht</span>
+        <h3>Kein Callcenter.<br>Keine Warteschleife.</h3>
+        <p class="ktrust-sub">Sie schreiben direkt an die Produktberatung — nicht an ein Support-Ticket-System.</p>
+        <div class="ktrust-checks">
+          <div class="ktrust-check">
+            <span class="ktrust-check-ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f6c945" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            Antwort innerhalb eines Werktags
+          </div>
+          <div class="ktrust-check">
+            <span class="ktrust-check-ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f6c945" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            Fachliche Beratung statt Skripte
+          </div>
+          <div class="ktrust-check">
+            <span class="ktrust-check-ic"><svg width="9" height="9" viewBox="0 0 24 24" fill="none" stroke="#f6c945" stroke-width="3" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg></span>
+            DSGVO-konform · Hosting in Deutschland
+          </div>
+        </div>
+        <div class="ktrust-contact">
+          <div class="dm-avatar">MB</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:#fff">M. Berger</div>
+            <div style="font-size:12.5px;color:#a6abc4">Produktberatung immology</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: form card -->
+      <div class="kontakt-form" id="kFormWrap">
+        <div id="kFormInner">
+          <div class="kchips-label">Worum geht es?</div>
+          <div class="kchips" id="kChips">
+            <button type="button" class="kchip active" data-val="Preise &amp; Lizenzen">Preise &amp; Lizenzen</button>
+            <button type="button" class="kchip" data-val="Produktdemo">Produktdemo</button>
+            <button type="button" class="kchip" data-val="Partnerschaft">Partnerschaft</button>
+            <button type="button" class="kchip" data-val="Sonstiges">Sonstiges</button>
+          </div>
+
+          <div class="kform-grid2">
+            <label class="kform-label" style="margin-bottom:0">
+              Name*
+              <input class="kform-input" id="kName" type="text" placeholder="Vor- und Nachname" autocomplete="name">
+            </label>
+            <label class="kform-label" style="margin-bottom:0">
+              Unternehmen
+              <input class="kform-input" id="kCompany" type="text" placeholder="z. B. Wohnbau GmbH" autocomplete="organization">
+            </label>
+          </div>
+
+          <label class="kform-label">
+            Geschäftliche E-Mail*
+            <input class="kform-input" id="kEmail" type="email" placeholder="name@unternehmen.de" autocomplete="email">
+            <span class="kform-errmsg" id="kEmailErr">Bitte eine gültige E-Mail-Adresse eingeben.</span>
+          </label>
+
+          <label class="kform-label">
+            Ihre Nachricht*
+            <textarea class="kform-textarea kform-input" id="kMsg" rows="4" placeholder="Wie können wir Ihnen helfen?"></textarea>
+          </label>
+
+          <label class="kdsgvo" id="kDsgvoLabel" for="kDsgvo">
+            <input type="checkbox" id="kDsgvo" style="position:absolute;opacity:0;width:0;height:0;pointer-events:none">
+            <span class="kdsgvo-box" id="kDsgvoBox" aria-hidden="true">
+              <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="#12142a" stroke-width="3.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+            </span>
+            <span>Ich stimme der Verarbeitung meiner Daten gemäß der <a href="#" onclick="event.stopPropagation()" style="color:inherit;text-decoration:underline">Datenschutzerklärung</a> zu.*</span>
+          </label>
+
+          <button class="kform-cta" id="kSubmitBtn" type="button" disabled>
+            Nachricht senden →
+          </button>
+          <p class="kform-microcopy">Antwort innerhalb eines Werktags · keine Newsletter-Anmeldung</p>
+        </div>
+      </div>
+
     </div>
   </div>
 </section>
@@ -665,7 +807,7 @@ blockquote{font-size:.96rem;font-weight:500;line-height:1.7;padding-top:24px;col
   <div class="foot__i">
     <span class="foot__c">© 2026 immology GmbH</span>
     <nav class="foot__links">
-      <a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">AGB</a><a href="#">Kontakt</a>
+      <a href="#">Impressum</a><a href="#">Datenschutz</a><a href="#">AGB</a><a href="#kontakt">Kontakt</a>
     </nav>
   </div>
 </footer>
@@ -780,7 +922,7 @@ const countObserver = new IntersectionObserver((entries)=>{
 document.querySelectorAll('.count').forEach(el=>countObserver.observe(el))
 
 // Scroll-spy – nur aktiv nach erstem Scroll, deaktiviert wenn über Hero
-const sections = ['produkt','video','problem','features','referenzen']
+const sections = ['produkt','video','problem','features','referenzen','kontakt']
 let hasScrolled = false
 window.addEventListener('scroll', () => { hasScrolled = true }, { passive: true, once: true })
 
@@ -1245,6 +1387,107 @@ if (heroEl) heroObs.observe(heroEl)
   // ── Wire all "Demo buchen" triggers ───────────────────────────────────────
   document.querySelectorAll('.dm-open-btn, a[href="#demo"]').forEach(el => {
     el.addEventListener('click', ev => { ev.preventDefault(); open(); });
+  });
+})();
+</script>
+<script>
+// ── Kontakt-Formular ──────────────────────────────────────────────────────────
+(function() {
+  const EMAIL_RE = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
+  let dsgvoChecked = false;
+  let emailTouched = false;
+  let selectedChip = 'Preise & Lizenzen';
+
+  const nameEl    = document.getElementById('kName');
+  const emailEl   = document.getElementById('kEmail');
+  const emailErr  = document.getElementById('kEmailErr');
+  const msgEl     = document.getElementById('kMsg');
+  const submitBtn = document.getElementById('kSubmitBtn');
+  const dsgvoLabel= document.getElementById('kDsgvoLabel');
+  const dsgvoBox  = document.getElementById('kDsgvoBox');
+  const chips     = document.querySelectorAll('.kchip');
+
+  if (!nameEl) return; // guard
+
+  // Chips
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      // Produktdemo chip opens demo modal instead
+      if (chip.dataset.val === 'Produktdemo') {
+        const evt = new MouseEvent('click', { bubbles: true });
+        const demoLink = document.querySelector('a[href="#demo"]');
+        if (demoLink) demoLink.dispatchEvent(evt);
+        return;
+      }
+      chips.forEach(c => c.classList.remove('active'));
+      chip.classList.add('active');
+      selectedChip = chip.dataset.val;
+    });
+  });
+
+  // DSGVO toggle — native checkbox change event, 100% reliable
+  const dsgvoInput = document.getElementById('kDsgvo');
+  dsgvoInput.addEventListener('change', () => {
+    dsgvoChecked = dsgvoInput.checked;
+    dsgvoLabel.classList.toggle('checked', dsgvoChecked);
+    updateCta();
+  });
+
+  function isValid() {
+    const name = nameEl.value.trim();
+    const email = emailEl.value.trim();
+    const msg = msgEl.value.trim();
+    return name.length >= 2 && EMAIL_RE.test(email) && msg.length >= 2 && dsgvoChecked;
+  }
+
+  function updateCta() {
+    submitBtn.disabled = !isValid();
+  }
+
+  function showEmailErr() {
+    const val = emailEl.value.trim();
+    const bad = val.length > 0 && !EMAIL_RE.test(val);
+    emailEl.classList.toggle('kform-err', bad);
+    emailErr.classList.toggle('visible', bad);
+  }
+
+  nameEl.addEventListener('input', updateCta);
+  msgEl.addEventListener('input', updateCta);
+
+  emailEl.addEventListener('input', () => {
+    if (emailTouched) showEmailErr();
+    updateCta();
+  });
+  emailEl.addEventListener('blur', () => {
+    emailTouched = true;
+    showEmailErr();
+  });
+
+  submitBtn.addEventListener('click', () => {
+    if (!isValid()) return;
+    const firstName = nameEl.value.trim().split(' ')[0];
+    const email = emailEl.value.trim();
+
+    // Send via EmailJS
+    emailjs.send('service_190370', 'template_demo_anfrage', {
+      name:    nameEl.value.trim(),
+      email:   email,
+      company: document.getElementById('kCompany').value.trim() || '–',
+      note:    '[' + selectedChip + '] ' + msgEl.value.trim()
+    }).catch(err => console.error('[emailjs] Kontakt-Fehler:', err));
+
+    // Success state
+    const wrap = document.getElementById('kFormInner');
+    wrap.innerHTML = `
+      <div class="kontakt-success">
+        <div class="kontakt-success-ic">
+          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round"><path d="M20 6L9 17l-5-5"/></svg>
+        </div>
+        <h3>Vielen Dank, ${firstName}!</h3>
+        <p>Wir haben Ihre Nachricht erhalten und melden uns innerhalb eines Werktags an <strong>${email}</strong>.</p>
+        <button type="button" class="btn-ghost-dark" id="kReset">Weitere Nachricht senden</button>
+      </div>`;
+    document.getElementById('kReset').addEventListener('click', () => location.reload());
   });
 })();
 </script>
