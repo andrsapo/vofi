@@ -29,7 +29,7 @@ const SCHRITTE: { nr: ProzessSchritt; titel: string; hinweis?: string[] }[] = [
   { nr: 4, titel: 'Finanzierung', hinweis: ['Bitte beschreiben Sie alle grundlegenden Kreditdaten'] },
 ]
 
-export function SzenarienNav({ projekt }: { projekt: Projekt }) {
+export function SzenarienNav({ projekt, kollabiert, onKollabiert }: { projekt: Projekt; kollabiert: boolean; onKollabiert: (v: boolean) => void }) {
   const app = useApp()
   const store = useStore()
   const szenarien = szenarienFuerProjekt(app, projekt.id)
@@ -37,7 +37,6 @@ export function SzenarienNav({ projekt }: { projekt: Projekt }) {
   const [neuesSzenarioOffen, setNeuesSzenarioOffen] = useState(false)
   const [loeschKandidat, setLoeschKandidat] = useState<Szenario | null>(null)
   const [zugeklappt, setZugeklappt] = useState<Record<string, boolean>>({})
-  const [kollabiert, setKollabiert] = useState(false)
 
   const aktivesSzenarioId = route.view === 'projekt' ? route.szenarioId : null
   const aktiverSchritt = route.view === 'projekt' ? route.schritt : null
@@ -49,7 +48,7 @@ export function SzenarienNav({ projekt }: { projekt: Projekt }) {
           type="button"
           className="rail__collapse-btn"
           aria-label={kollabiert ? 'Leiste aufklappen' : 'Leiste zuklappen'}
-          onClick={() => setKollabiert((v) => !v)}
+          onClick={() => onKollabiert(!kollabiert)}
         >
           <IconDoppelpfeil
             size={15}

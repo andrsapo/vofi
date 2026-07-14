@@ -47,6 +47,7 @@ function ProjektLayoutInner({
   const store = useStore()
   const hilfe = useHilfePanel()
   const [panelBreite, setPanelBreite] = useState(300)
+  const [railKollabiert, setRailKollabiert] = useState(false)
   const isDragging = useRef(false)
   const startX = useRef(0)
   const startBreite = useRef(300)
@@ -102,14 +103,14 @@ function ProjektLayoutInner({
             <div className="projekt-layout__fuss-rechts">{fussRechts}</div>
           </div>
         </div>
-        <div className="projekt-layout__panel-wrapper" style={{ width: panelBreite, flexShrink: 0 }}>
-          <div className="projekt-layout__drag-handle" onMouseDown={onDragStart} />
+        <div className="projekt-layout__panel-wrapper" style={{ width: railKollabiert ? 44 : panelBreite, flexShrink: 0 }}>
+          <div className="projekt-layout__drag-handle" onMouseDown={onDragStart} style={railKollabiert ? { display: 'none' } : undefined} />
           {hilfe.offen ? (
             <HilfePanelMultiTab onPanelClose={hilfe.schliesse} />
           ) : app.ui.rechtePanelAnsicht === 'kommentare' ? (
             <KommentarPanel projekt={projekt} />
           ) : (
-            <SzenarienNav projekt={projekt} />
+            <SzenarienNav projekt={projekt} kollabiert={railKollabiert} onKollabiert={setRailKollabiert} />
           )}
         </div>
       </div>
