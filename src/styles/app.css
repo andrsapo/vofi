@@ -1484,6 +1484,7 @@ button.zuletzt__karte:hover {
 }
 .rail--kollabiert {
   width: 44px;
+  min-width: 44px;
   overflow: hidden;
 }
 .projekt-layout__panel-wrapper:has(.rail--kollabiert) {
