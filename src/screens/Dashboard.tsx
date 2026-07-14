@@ -836,8 +836,6 @@ function ZuletztVerwendet() {
               key={k.id}
               type="button"
               className="zuletzt__karte dashboard-card"
-              disabled={k.anzahlProjekte === 0}
-              style={k.anzahlProjekte === 0 ? { opacity: 0.5, cursor: 'default' } : undefined}
               onClick={() => {
                 const basis = szenarienFuerProjekt(app, k.id)[0]
                 if (basis) store.navigiere({ view: 'projekt', projektId: k.id, szenarioId: basis.id, schritt: 1 })
