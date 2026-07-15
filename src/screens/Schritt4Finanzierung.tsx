@@ -16,7 +16,7 @@ export function Schritt4Finanzierung({ projekt }: { projekt: Projekt }) {
   const store = useStore()
   const kontext = useFeldKontext()
   const daten = app.szenarioDaten[kontext.szenarioId]
-  if (!daten) return null
+  if (!daten || !daten.objektdaten || !daten.ertraegeAufwendungen || !daten.finanzierung) return null
   const fin = daten.finanzierung
 
   const aendere = (fn: (daten: SzenarioDaten) => void) => store.aendereSzenarioDaten(kontext.szenarioId, fn)

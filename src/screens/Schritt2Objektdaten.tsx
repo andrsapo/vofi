@@ -26,7 +26,7 @@ export function Schritt2Objektdaten({ projekt }: { projekt: Projekt }) {
   const [rndOffen, setRndOffen] = useState(true)
   const [grundstueckOffen, setGrundstueckOffen] = useState(true)
   const alleOffen = investitionOffen && rndOffen && grundstueckOffen
-  if (!daten) return null
+  if (!daten || !daten.objektdaten || !daten.ertraegeAufwendungen || !daten.finanzierung) return null
   const d = daten.objektdaten
 
   const aendere = (fn: (daten: SzenarioDaten) => void) => store.aendereSzenarioDaten(kontext.szenarioId, fn)

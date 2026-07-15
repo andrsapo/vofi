@@ -23,7 +23,7 @@ export function Schritt3Ertraege({ projekt }: { projekt: Projekt }) {
   // "Sollmieten" klappt ausschließlich die Liste der Unterkategorien
   // gemeinsam auf/zu.
   const [sammelSollmietenOffen, setSammelSollmietenOffen] = useState(true)
-  if (!daten) return null
+  if (!daten || !daten.objektdaten || !daten.ertraegeAufwendungen || !daten.finanzierung) return null
   const jahre = projekt.betrachtungszeitraumJahre
 
   const aendere = (fn: (daten: SzenarioDaten) => void) => store.aendereSzenarioDaten(kontext.szenarioId, fn)
